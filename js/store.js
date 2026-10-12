@@ -1,5 +1,5 @@
-import { DEFAULT_PROGRAMS } from "./data.js";
-import { uid } from "./util.js";
+import { DEFAULT_PROGRAMS, SEED_SESSIONS } from "./data.js";
+import { uid, exKey } from "./util.js";
 
 const KEY = "gymlog.v1";
 
@@ -29,6 +29,25 @@ try {
   state = fresh();
 }
 if (!state.programs?.length) state.programs = withIds(structuredClone(DEFAULT_PROGRAMS));
+
+// Migrazione 1: storico importato dall'app del coach + note tecniche aggiornate.
+if (!(state.seedV >= 1)) {
+  const have = new Set(state.sessions.map((x) => x.id));
+  for (const sess of SEED_SESSIONS) {
+    if (have.has(sess.id)) continue;
+    state.sessions.push({ ...sess, exercises: sess.exercises.map((e) => ({ ...e, key: exKey(e.name) })) });
+  }
+  const def = DEFAULT_PROGRAMS.find((p) => p.id === "p4");
+  const mine = state.programs.find((p) => p.id === "p4");
+  if (def && mine) {
+    const notes = new Map(def.days.flatMap((d) => d.items).map((it) => [exKey(it.name), it.note]));
+    for (const d of mine.days) for (const it of d.items) {
+      const n = notes.get(exKey(it.name));
+      if (n && (!it.note || it.note.startsWith("Nell'app del coach") || it.note.startsWith("Myo-reps:"))) it.note = n;
+    }
+  }
+  state.seedV = 1;
+}
 
 let saveErr = null;
 export function save() {

@@ -13,11 +13,11 @@ export const DEFAULT_PROGRAMS = [
       {
         title: "Petto + Spalle + Tricipiti",
         items: [
-          E("Panca 30° al multipower", 4, "6-10", "150 sec"),
-          E("Alzate laterali con manubri", 3, "10-12", "1 min"),
+          E("Panca 30° al multipower", 4, "6-10", "150 sec", "30° — lieve fermo al petto."),
+          E("Alzate laterali con manubri", 3, "10-12", "1 min", "Eccentrica controllata."),
           E("Spinte in alto con manubri da seduto", 3, "8-10", "90 sec"),
           E("Chest press", 3, "8-12", "90 sec"),
-          E("Croci ai cavi altezza spalle", 3, "10-15", "90 sec"),
+          E("Croci ai cavi altezza spalle", 3, "10-15", "90 sec", "Discesa 2/3\"."),
           E("Tirate al mento al cavo basso con corda", 3, "8-12", "90 sec"),
           E("French press con manubri su panca piana", 3, "8-12", "90 sec"),
           E("Push down tricipiti schiena al macchinario", 3, "8-12", "90 sec"),
@@ -29,8 +29,8 @@ export const DEFAULT_PROGRAMS = [
           E("Pendulum squat", 3, "6-10", "2 min"),
           E("Hyperextension", 3, "8-12", "2 min"),
           E("Leg Press a 45°", 3, "8-10", "2 min"),
-          E("Squat bulgaro con manubri", 3, "8-12", "90 sec"),
-          E("Leg Extension", 2, "8 + myo + myo", "2 min", "Myo-reps: 1 serie da 8, poi 2 mini-serie con pause brevissime (respiri)."),
+          E("Squat bulgaro con manubri", 3, "8-12", "90 sec", "Discesa 2/3\"."),
+          E("Leg Extension", 2, "8 + myo + myo", "2 min", "Fai 8 reps, aspetta 25 secondi e fai tutte quelle che riesci; ripeti la mini-serie (myo-reps)."),
           E("Plank", 3, "1 min", "1 min"),
         ],
       },
@@ -38,7 +38,7 @@ export const DEFAULT_PROGRAMS = [
         title: "Upper Pull + Richiamo push",
         items: [
           E("Lat Machine con trazy bar", 3, "8-12", "90 sec"),
-          E("Spinte su panca inclinata con manubri", 4, "8-12", "90 sec"),
+          E("Spinte su panca inclinata con manubri", 4, "8-12", "90 sec", "Inclinata 30°. Va bene anche Chest press incline 30° se lo preferisci."),
           E("Rematore con manubrio su panca", 4, "8-10", "90 sec"),
           E("Pull Down singolo al macchinario", 3, "10-12", "90 sec"),
           E("Aperture posteriori con manubri prono su panca", 3, "10-15", "1 min"),
@@ -51,12 +51,12 @@ export const DEFAULT_PROGRAMS = [
         items: [
           E("Leg Curl in piedi", 3, "10-15", "1 min"),
           E("Hip thrust machine", 4, "8-10", "2 min"),
-          E("Panca piana con bilanciere", 4, "5 (vedi note)", "150 sec", "Nell'app del coach: \"5, vedi note\". Schema delle note da verificare."),
+          E("Panca piana con bilanciere", 4, "5 (vedi note)", "150 sec", "Parti da un 4x5 con un carico circa buffer 2, poi la settimana seguente fai un 4x3 sempre buffer 2, cerca di aumentare le reps a parità di carico fintanto che non chiudi nuovamente un 5x5, dopo di che ripeti lo schema aggiornando il carico."),
           E("Military press con bilanciere", 3, "6-8", "2 min"),
           E("Stacco rumeno con manubri", 3, "10-12", "90 sec"),
           E("Katana extension", 4, "8-10", "90 sec", "Superserie con curl al cavo basso. Recupero dopo il curl.", "F"),
           E("Curl bicipiti al cavo basso con asta dritta", 4, "6-10", "0", "In superserie con la Katana extension.", "F"),
-          E("Alzate laterali singole al cavo da dietro", 3, "10-12", "90 sec"),
+          E("Alzate laterali singole al cavo da dietro", 3, "10-12", "90 sec", "Fermo 1\" in picco di contrazione."),
           E("Leg raises sui gomiti alle parallele", 3, "10-15", "1 min"),
         ],
       },
@@ -233,3 +233,58 @@ export const NUTRITION = {
     ["Pre-nanna", ["Ashwagandha", "3 cps ZMA"]],
   ],
 };
+
+// Storico importato dall'app del coach (video "video pesi", 12/10/2026).
+// Dove il video mostrava solo la prima serie è stata registrata solo quella.
+const S_ = (date, dayIndex, dayTitle, exercises) => ({
+  id: "seed-" + date,
+  programId: "p4",
+  programName: "4 giorni",
+  dayIndex,
+  dayTitle,
+  startedAt: `${date}T18:00:00`,
+  endedAt: null,
+  note: "Importato dallo storico dell'app del coach.",
+  exercises: exercises.map(([name, sets]) => ({ name, sets: sets.map(([kg, reps]) => ({ kg, reps })) })),
+});
+export const SEED_SESSIONS = [
+  S_("2026-09-25", 2, "Upper Pull + Richiamo push", [
+    ["Curl su panca Scott con bilanciere EZ", [[20, 12], [20, 10], [20, 9]]],
+  ]),
+  S_("2026-10-01", 2, "Upper Pull + Richiamo push", [
+    ["Hammer curl alternato", [[14, 11], [14, 7], [14, 6]]],
+  ]),
+  S_("2026-10-03", 3, "Full Body", [
+    ["Hip thrust machine", [[30, 8]]],
+    ["Stacco rumeno con manubri", [[60, 8], [60, 8], [60, 8]]],
+  ]),
+  S_("2026-10-07", 1, "Lower Quad + Richiamo glutei", [
+    ["Pendulum squat", [[50, 9]]],
+    ["Hyperextension", [[60, 12]]],
+    ["Leg Press a 45°", [[285, 8]]],
+    ["Squat bulgaro con manubri", [[40, 9]]],
+    ["Leg Extension", [[70, 8], [70, 5], [70, 5]]],
+  ]),
+  S_("2026-10-08", 2, "Upper Pull + Richiamo push", [
+    ["Lat Machine con trazy bar", [[60, 10]]],
+    ["Spinte su panca inclinata con manubri", [[26, 9], [26, 9], [26, 8], [26, 8]]],
+    ["Rematore con manubrio su panca", [[60, 10], [60, 10], [60, 9], [60, 8]]],
+    ["Pull Down singolo al macchinario", [[30, 10], [30, 10], [30, 8]]],
+  ]),
+  S_("2026-10-10", 3, "Full Body", [
+    ["Leg Curl in piedi", [[25, 12]]],
+    ["Panca piana con bilanciere", [[70, 4], [70, 4], [70, 4], [70, 3]]],
+    ["Military press con bilanciere", [[50, 4], [45, 6], [45, 5]]],
+    ["Alzate laterali singole al cavo da dietro", [[5, 12]]],
+  ]),
+  S_("2026-10-12", 0, "Petto + Spalle + Tricipiti", [
+    ["Panca 30° al multipower", [[55, 9], [55, 7], [55, 6], [55, 6]]],
+    ["Alzate laterali con manubri", [[12, 12], [12, 10], [12, 8]]],
+    ["Spinte in alto con manubri da seduto", [[20, 9], [20, 10], [20, 8]]],
+    ["Chest press", [[55, 10], [55, 12], [55, 10]]],
+    ["Croci ai cavi altezza spalle", [[20, 10], [20, 13], [20, 13]]],
+    ["Tirate al mento al cavo basso con corda", [[20, 8], [20, 8], [20, 7]]],
+    ["French press con manubri su panca piana", [[12, 8], [12, 6], [12, 6]]],
+    ["Push down tricipiti schiena al macchinario", [[20, 13], [20, 13], [20, 12]]],
+  ]),
+];
