@@ -557,7 +557,8 @@ function vWeight() {
   // pendenza (kg/settimana) negli ultimi 28 giorni, regressione lineare
   const r28 = bw.filter((x) => Date.now() - new Date(x.date) <= 28 * 86400000);
   let slope = null;
-  if (r28.length >= 3) {
+  const span = r28.length ? (new Date(r28.at(-1).date) - new Date(r28[0].date)) / 86400000 : 0;
+  if (r28.length >= 4 && span >= 10) {
     const xs = r28.map((x) => new Date(x.date).getTime() / (7 * 86400000)), ys = r28.map((x) => x.kg);
     const mx = xs.reduce((a, b) => a + b) / xs.length, my = ys.reduce((a, b) => a + b) / ys.length;
     const den = xs.reduce((a, x) => a + (x - mx) ** 2, 0);
@@ -576,7 +577,7 @@ function vWeight() {
     <div><b>${a7 ? fmtKg(Math.round(a7 * 10) / 10) : "–"}</b><span>media 7 gg</span></div>
     <div><b>${slope != null ? (slope > 0 ? "+" : "") + fmtKg(Math.round(slope * 100) / 100) : "–"}</b><span>kg/sett. (28 gg)</span></div>
   </div>
-  ${slope != null ? `<div class="status ${slope < 0.2 ? "low" : slope > 0.4 ? "high" : "ok"}"><b>${slope < 0.2 ? "Sotto obiettivo" : slope > 0.4 ? "Sopra obiettivo" : "In linea"}</b> — ${slope < 0.2 ? "sali di un gradino di carboidrati (vedi Dieta)." : slope > 0.4 ? "scendi di un gradino: stai prendendo troppo grasso." : "resta così."} <span class="small">Obiettivo +0,2–0,4 kg/sett.</span></div>` : ""}
+  ${stepCard(slope, r28.length, span)}
   ${pct != null ? `<p class="muted small center">Variazione ${pct > 0 ? "+" : ""}${(Math.round(pct * 100) / 100).toLocaleString("it-IT")}% del peso a settimana. In fase di massa il riferimento in letteratura è circa +0,25–0,5%/sett.</p>` : `<p class="muted small center">Pesati al mattino, a digiuno, dopo il bagno. Conta la media settimanale, non il singolo dato.</p>`}
   <div class="card">${lineChart(bw.map((x) => ({ t: x.date, y: x.kg })))}</div>
   ${bw
@@ -584,6 +585,37 @@ function vWeight() {
     .reverse()
     .map((x) => `<div class="w-row"><span>${fmtDate(x.date, true)}</span><b>${fmtKg(x.kg)} kg</b><button class="icon-btn small" data-action="del-weight" data-date="${x.date}" aria-label="Elimina">${ICON.x}</button></div>`)
     .join("")}`;
+}
+
+function stepCard(slope, n, span) {
+  const st = S();
+  const steps = NUTRITION.phases;
+  const cur = Math.min(st.carbStep ?? 0, steps.length - 1);
+  const since = st.carbStepDate ? Math.floor((Date.now() - new Date(st.carbStepDate)) / 86400000) : null;
+  const wait = since != null && since < 14;
+  let cls = "ok", title, msg;
+  if (slope == null) {
+    cls = "wait"; title = "Servono più pesate";
+    msg = `Pesati ogni mattina: dopo almeno 4 pesate su 10+ giorni ti dico se aumentare (ora: ${n}${n ? `, su ${Math.round(span)} giorni` : ""}).`;
+  } else if (wait) {
+    cls = "wait"; title = `Aspetta ancora ${14 - since} giorni`;
+    msg = `Hai cambiato gradino ${since === 0 ? "oggi" : `${since} giorni fa`}: i primi giorni il peso sale per acqua e glicogeno. Valuta dopo 2 settimane.`;
+  } else if (slope < 0.2) {
+    cls = "low"; title = "Sotto obiettivo → sali di un gradino";
+    msg = cur < steps.length - 1 ? `Passa a <b>${esc(steps[cur + 1][0])}</b>: ${esc(steps[cur + 1][1])}.` : "Sei all'ultimo gradino: aggiungi ~150 kcal di carboidrati densi (frutta secca, cereali, pane).";
+  } else if (slope > 0.4) {
+    cls = "high"; title = "Sopra obiettivo → scendi di un gradino";
+    msg = cur > 0 ? `Torna a <b>${esc(steps[cur - 1][0])}</b>: ${esc(steps[cur - 1][1])}.` : "Togli ~150 kcal (es. 20 g di pasta a pasto): stai prendendo troppo grasso.";
+  } else {
+    title = "In linea → resta così"; msg = "Continua con quello che mangi adesso.";
+  }
+  return `<div class="status ${cls}"><b>${title}</b><p>${msg}</p>
+    <div class="step-now"><span>Gradino attuale: <b>${esc(steps[cur][0])}</b> · ${esc(steps[cur][1])}</span></div>
+    <div class="row gap wrap">
+      <button class="btn small" data-action="step" data-d="-1" ${cur === 0 ? "disabled" : ""}>− Gradino</button>
+      <button class="btn small" data-action="step" data-d="1" ${cur === steps.length - 1 ? "disabled" : ""}>+ Gradino</button>
+    </div>
+    <span class="small">Obiettivo +0,2–0,4 kg/sett. Quando cambi davvero cosa mangi, aggiorna il gradino qui.</span></div>`;
 }
 
 /* ------------------------------------------------------------------ FOOD */
@@ -605,7 +637,7 @@ function vFood() {
   <h5 class="month">Come alzare i carboidrati</h5>
   <div class="card">
     <p class="small">${esc(N.phasesNote)}</p>
-    <table class="phases">${N.phases.map(([a, b, c], i) => `<tr class="${i === 0 ? "cur" : ""}"><td><b>${esc(a)}</b></td><td>${esc(b)}</td><td>${esc(c)}</td></tr>`).join("")}</table>
+    <table class="phases">${N.phases.map(([a, b, c], i) => `<tr class="${i === (S().carbStep ?? 0) ? "cur" : ""}"><td><b>${esc(a)}</b></td><td>${esc(b)}</td><td>${esc(c)}</td></tr>`).join("")}</table>
     <a class="btn small full" href="#/weight">Controlla il tuo andamento</a>
   </div>
   <h5 class="month">Che frutta</h5>
@@ -636,7 +668,7 @@ function vSettings() {
       <button class="btn primary" data-action="export">Esporta backup</button>
       <label class="btn">Importa backup<input type="file" accept=".json,application/json" data-action="import" hidden></label>
     </div>
-    <p class="muted small">Versione app 4 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
+    <p class="muted small">Versione app 5 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
   </div>
   <h5 class="month">Installa sul telefono</h5>
   <div class="card small">
@@ -751,6 +783,12 @@ app.addEventListener("click", (e) => {
       if (confirm("Eliminare definitivamente questa seduta?")) { st.sessions = st.sessions.filter((s) => s.id !== d.id); save(); go("#/history"); }
       break;
     case "metric": exMetric = d.m; render(); break;
+    case "step": {
+      const max = NUTRITION.phases.length - 1;
+      st.carbStep = Math.max(0, Math.min(max, (st.carbStep ?? 0) + +d.d));
+      st.carbStepDate = new Date().toISOString();
+      save(); render(); break;
+    }
     case "del-weight": st.bodyweight = st.bodyweight.filter((x) => x.date !== d.date); save(); render(); break;
     case "export": exportBackup(); break;
     case "reset-programs":

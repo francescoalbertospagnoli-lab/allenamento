@@ -286,3 +286,8 @@ input, textarea, select { font: inherit; color: var(--text); }
 .status.ok { background: var(--ok-soft); color: var(--ok); }
 .status.low, .status.high { background: #fff8e1; color: #5d4300; }
 @media (prefers-color-scheme: dark) { .status.low, .status.high { background: #3a2f0d; color: #ffe08a; } }
+
+.status p { margin: 4px 0 8px; }
+.status.wait { background: var(--card); color: var(--text); box-shadow: var(--shadow); }
+.status .step-now { font-size: 13px; padding: 8px 0; border-top: 1px solid rgba(0,0,0,.08); }
+.status .btn { margin: 2px 0 6px; }
