@@ -1,6 +1,6 @@
 // Service worker: rende l'app utilizzabile offline.
 // Aggiorna VERSION a ogni modifica dei file per forzare l'aggiornamento sui telefoni.
-const VERSION = "v2";
+const VERSION = "v3";
 const FILES = [
   "./", "./index.html", "./css/styles.css", "./manifest.webmanifest",
   "./js/app.js", "./js/store.js", "./js/data.js", "./js/util.js", "./js/chart.js",
@@ -16,7 +16,7 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET" || new URL(e.request.url).origin !== location.origin) return;
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, { cache: "no-cache" })
       .then((r) => { const copy = r.clone(); caches.open(VERSION).then((c) => c.put(e.request, copy)); return r; })
       .catch(() => caches.match(e.request, { ignoreSearch: true }).then((r) => r || caches.match("./index.html")))
   );
