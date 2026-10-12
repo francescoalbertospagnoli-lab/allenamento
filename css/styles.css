@@ -275,3 +275,14 @@ input, textarea, select { font: inherit; color: var(--text); }
 .edit-ex input { padding: 9px 10px; font-size: 15px; }
 .grid4 { display: grid; grid-template-columns: 0.7fr 1fr 1fr 0.9fr; gap: 6px; }
 .grid4 label span { display: block; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+
+.phases { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 10px 0 4px; }
+.phases td { padding: 8px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.phases td:last-child { text-align: right; white-space: nowrap; color: var(--muted); }
+.phases tr.cur td { background: var(--red-soft); }
+.kv > div span.small { color: var(--muted); text-align: right; }
+.status { padding: 12px 14px; border-radius: 12px; margin-bottom: 12px; font-size: 14px; }
+.status .small { display: block; opacity: .75; margin-top: 2px; }
+.status.ok { background: var(--ok-soft); color: var(--ok); }
+.status.low, .status.high { background: #fff8e1; color: #5d4300; }
+@media (prefers-color-scheme: dark) { .status.low, .status.high { background: #3a2f0d; color: #ffe08a; } }

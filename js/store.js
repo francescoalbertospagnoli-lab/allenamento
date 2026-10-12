@@ -49,6 +49,12 @@ if (!(state.seedV >= 1)) {
   state.seedV = 1;
 }
 
+// Migrazione 2: peso di partenza dichiarato (84 kg al 12/10/2026).
+if (!(state.seedV >= 2)) {
+  if (!state.bodyweight.some((x) => x.date === "2026-10-12")) state.bodyweight.push({ date: "2026-10-12", kg: 84 });
+  state.seedV = 2;
+}
+
 let saveErr = null;
 export function save() {
   try {

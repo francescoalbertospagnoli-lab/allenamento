@@ -576,6 +576,7 @@ function vWeight() {
     <div><b>${a7 ? fmtKg(Math.round(a7 * 10) / 10) : "–"}</b><span>media 7 gg</span></div>
     <div><b>${slope != null ? (slope > 0 ? "+" : "") + fmtKg(Math.round(slope * 100) / 100) : "–"}</b><span>kg/sett. (28 gg)</span></div>
   </div>
+  ${slope != null ? `<div class="status ${slope < 0.2 ? "low" : slope > 0.4 ? "high" : "ok"}"><b>${slope < 0.2 ? "Sotto obiettivo" : slope > 0.4 ? "Sopra obiettivo" : "In linea"}</b> — ${slope < 0.2 ? "sali di un gradino di carboidrati (vedi Dieta)." : slope > 0.4 ? "scendi di un gradino: stai prendendo troppo grasso." : "resta così."} <span class="small">Obiettivo +0,2–0,4 kg/sett.</span></div>` : ""}
   ${pct != null ? `<p class="muted small center">Variazione ${pct > 0 ? "+" : ""}${(Math.round(pct * 100) / 100).toLocaleString("it-IT")}% del peso a settimana. In fase di massa il riferimento in letteratura è circa +0,25–0,5%/sett.</p>` : `<p class="muted small center">Pesati al mattino, a digiuno, dopo il bagno. Conta la media settimanale, non il singolo dato.</p>`}
   <div class="card">${lineChart(bw.map((x) => ({ t: x.date, y: x.kg })))}</div>
   ${bw
@@ -601,7 +602,15 @@ function vFood() {
     </details>`
     )
     .join("")}
-  <h5 class="month">Regole generali</h5>
+  <h5 class="month">Come alzare i carboidrati</h5>
+  <div class="card">
+    <p class="small">${esc(N.phasesNote)}</p>
+    <table class="phases">${N.phases.map(([a, b, c], i) => `<tr class="${i === 0 ? "cur" : ""}"><td><b>${esc(a)}</b></td><td>${esc(b)}</td><td>${esc(c)}</td></tr>`).join("")}</table>
+    <a class="btn small full" href="#/weight">Controlla il tuo andamento</a>
+  </div>
+  <h5 class="month">Che frutta</h5>
+  <div class="card kv">${N.fruits.map(([k, v]) => `<div><b>${esc(k)}</b><span class="small">${esc(v)}</span></div>`).join("")}</div>
+  <h5 class="month">Regole</h5>
   <div class="card"><ul class="rules">${N.rules.map((r) => `<li>${esc(r)}</li>`).join("")}</ul></div>
   <h5 class="month">Integrazione</h5>
   <div class="card supp">${N.supplements.map(([k, list]) => `<div><span>${esc(k)}</span><ul>${list.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>`).join("")}</div>
@@ -627,7 +636,7 @@ function vSettings() {
       <button class="btn primary" data-action="export">Esporta backup</button>
       <label class="btn">Importa backup<input type="file" accept=".json,application/json" data-action="import" hidden></label>
     </div>
-    <p class="muted small">Versione app 3 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
+    <p class="muted small">Versione app 4 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
   </div>
   <h5 class="month">Installa sul telefono</h5>
   <div class="card small">

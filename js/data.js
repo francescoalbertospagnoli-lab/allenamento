@@ -178,59 +178,77 @@ export const DEFAULT_PROGRAMS = [
 
 export const NUTRITION = {
   summary: [
-    ["Obiettivo", "Aumento massa muscolare"],
-    ["Pasti", "Colazione • Spuntino • Pranzo • Spuntino • Cena"],
-    ["Acqua", "≥ 4 L / giorno"],
-    ["Pasto libero", "1 a settimana (facoltativo)"],
+    ["Fase", "Massa (ottobre → fine maggio), poi definizione"],
+    ["Ritmo obiettivo", "+0,2–0,4 kg/settimana (media settimanale)"],
+    ["Calorie attuali (stima)", "~2.600 kcal riposo · ~2.700 allenamento"],
+    ["Proteine", "~165–190 g/die (≈2,0–2,3 g/kg) — già sufficienti"],
+    ["Carboidrati", "~345 g/die (≈4 g/kg) — si sale da qui"],
+    ["Grassi", "~65 g/die (≈0,8 g/kg)"],
   ],
   meals: [
     {
       name: "Colazione",
-      hint: "Tre opzioni alternative, scegline una.",
+      groups: [{ title: "", rows: [["Yogurt greco", "200 g"], ["Cereali", "80 g"], ["Burro di arachidi", "30 g"]] }],
+    },
+    {
+      name: "Metà mattina",
+      hint: "Nei giorni di allenamento, 60–90 min prima della seduta: carboidrati al posto delle noci (le noci si spostano alla merenda).",
       groups: [
-        { title: "Opzione 1 (dolce)", rows: [["Avena aromatizzata o farina di riso", "80 g"], ["Albume", "200 ml"], ["Uovo intero", "1"], ["Burro di arachidi", "30 g"]] },
-        { title: "Opzione 2 (dolce)", rows: [["Yogurt greco o budino proteico", "200 g"], ["Cornflakes o avena", "80 g"], ["Burro di arachidi o cioccolato fondente", "30 g"]] },
-        { title: "Opzione 3 (salata)", rows: [["Pane", "80 g"], ["Albume", "200 ml"], ["Uovo", "1"], ["Grana padano o parmigiano reggiano", "10 g"]] },
+        { title: "Giorni di allenamento", rows: [["Banana", "1 (≈120 g)"], ["Gallette di riso", "2–3"], ["Preworkout", "1 dose"]] },
+        { title: "Giorni di riposo", rows: [["Noci", "30 g"]] },
       ],
     },
     {
-      name: "Spuntino — mattina",
-      groups: [{ title: "", rows: [["Yogurt greco o budino proteico", "200 g"], ["oppure Whey Protein", "30 g"]] }],
+      name: "Post-allenamento",
+      groups: [{ title: "", rows: [["Proteine in polvere", "30 g di proteine"], ["Creatina monoidrato", "5 g"]] }],
     },
     {
       name: "Pranzo",
+      hint: "Peso a crudo. La quantità di pasta/riso segue il gradino attuale (vedi sotto).",
       groups: [
-        { title: "Primo (scegli una opzione)", rows: [["Riso, pasta, cous cous, orzo", "130 g"], ["Pane", "150 g"]] },
-        { title: "Secondo (scegli una opzione)", rows: [["Pollo", "150 g"], ["Tacchino", "150 g"], ["Albume", "300 ml"], ["Manzo o cavallo (max 2 volte/sett.)", "150 g"], ["Tonno al naturale", "112 g (1 scatoletta)"]] },
-        { title: "Condimento / contorno", rows: [["Olio di oliva", "10 g"], ["Verdura", "a piacere"]] },
+        { title: "", rows: [["Pasta / riso / cous cous (crudo)", "150 g"], ["Pollo, tacchino, manzo, pesce…", "150 g"], ["Verdure", "150–200 g"], ["Olio extravergine", "10 g"]] },
       ],
     },
     {
-      name: "Spuntino — pomeriggio",
-      groups: [{ title: "", rows: [["Banana o frutta di stagione", "1 porzione (150-200 g)"], ["Frutta secca", "30 g"]] }],
+      name: "Merenda",
+      groups: [
+        { title: "", rows: [["Yogurt proteico", "1 vasetto"], ["Frutto (vedi elenco)", "1"], ["Noci (solo giorni di allenamento)", "30 g"]] },
+      ],
     },
     {
       name: "Cena",
       groups: [
-        { title: "Primo (scegli una opzione)", rows: [["Riso, pasta o cous cous", "90 g"], ["Patate lessate", "370 g"], ["Gnocchi di patate", "300 g"], ["Pane", "110 g"]] },
-        { title: "Secondo (scegli una opzione)", rows: [["Pollo", "150 g"], ["Vitello", "150 g"], ["Tacchino", "150 g"], ["Coniglio", "150 g"], ["Lonza o arista magra di maiale", "150 g"], ["Albume + 1 uovo intero", "300 g"], ["Pesce bianco (merluzzo, nasello…) — salmone 1 volta/sett.", "200 g"]] },
-        { title: "Condimento / contorno", rows: [["Olio di oliva", "10 g"], ["Verdura", "a piacere"]] },
+        { title: "", rows: [["Pasta / riso / cous cous (crudo)", "150 g"], ["Pollo, tacchino, manzo, pesce…", "150 g"], ["Verdure", "150–200 g"], ["Olio extravergine", "10 g"]] },
       ],
     },
   ],
+  phasesNote: "Ogni 2 settimane guarda in Peso la variazione media: sotto +0,2 kg/sett. → sali di un gradino; tra 0,2 e 0,4 → resta; sopra 0,4 → scendi di un gradino. Dopo ogni aumento i primi 2–3 giorni il peso sale per acqua e glicogeno: non conta.",
+  phases: [
+    ["Attuale", "Pasta/riso 150 g a pasto", "≈2.600 kcal"],
+    ["Gradino 1", "+1 frutto a colazione e +1 a merenda", "+≈150 kcal"],
+    ["Gradino 2", "Pasta/riso 170 g a pasto", "+≈140 kcal"],
+    ["Gradino 3", "Cereali 100 g + 50 g di pane a cena", "+≈200 kcal"],
+    ["Gradino 4", "Pasta/riso 190–200 g a pasto", "+≈150–200 kcal"],
+  ],
+  fruits: [
+    ["Banana", "Pre-allenamento: digeribile, ~25 g di carboidrati"],
+    ["Datteri / uvetta", "Tanti carboidrati in poco volume (30 g ≈ 20 g carbo)"],
+    ["Cachi, uva", "Di stagione in autunno, ricchi di carboidrati"],
+    ["Kiwi, arance, mandarini", "Vitamina C e fibre, da novembre in stagione"],
+    ["Frutti di bosco (anche surgelati)", "Polifenoli, ottimi nello yogurt"],
+    ["Mele, pere", "Molto sazianti: meno adatte se fai fatica a mangiare"],
+  ],
   rules: [
-    "Usa dolcificante (TIC o equivalente) al posto dello zucchero.",
-    "Limita il sale a 5 g al giorno.",
-    "Bevi almeno 4 litri di acqua al giorno.",
-    "1 pasto libero a settimana (se lo vuoi fare).",
+    "Pesati ogni mattina a digiuno dopo il bagno e segna il peso in app: conta la media settimanale.",
+    "Almeno 2 frutti al giorno: con la verdura arrivi a ≥400 g di frutta e verdura.",
+    "Creatina 5 g tutti i giorni (dopo l'allenamento o a colazione nei giorni di riposo).",
+    "Se aumentano gonfiore o fatica a finire i pasti, aggiungi carboidrati liquidi o densi (frutta secca, succo, cereali) invece di più pasta.",
+    "Controlla la circonferenza vita ogni 2 settimane: se sale più di 3–4 cm dall'inizio della massa, rallenta.",
   ],
   supplements: [
-    ["Colazione", ["1 cps Vitamina C", "1 cps Multivitaminico", "1 cps Omega 3", "1 cps Acido Alfa Lipoico (ALA)", "4-6 g Beta Alanina", "5-6 g Creatina monoidrato"]],
-    ["Pre-workout", ["Powa 3.0 oppure Big Shot"]],
-    ["Durante il workout", ["2 cps Elettroliti"]],
-    ["Post-workout", ["2 cps Magnesio Bisglicinato"]],
-    ["Cena", ["1 cps Omega 3", "1 cps Vitamina C"]],
-    ["Pre-nanna", ["Ashwagandha", "3 cps ZMA"]],
+    ["Ogni giorno", ["Creatina monoidrato 5 g"]],
+    ["Pre-allenamento", ["Preworkout"]],
+    ["Post-allenamento", ["Proteine in polvere (30 g di proteine)"]],
   ],
 };
 
