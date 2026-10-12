@@ -192,9 +192,9 @@ export const NUTRITION = {
     },
     {
       name: "Metà mattina",
-      hint: "Nei giorni di allenamento, 60–90 min prima della seduta: carboidrati al posto delle noci (le noci si spostano alla merenda).",
+      hint: "Nei giorni di allenamento 60–90 min prima della seduta.",
       groups: [
-        { title: "Giorni di allenamento", rows: [["Banana", "1 (≈120 g)"], ["Gallette di riso", "2–3"], ["Preworkout", "1 dose"]] },
+        { title: "Giorni di allenamento", rows: [["Banana", "1 (≈120 g)"], ["Gallette di riso", "2"], ["Noci", "30 g"], ["Preworkout", "1 dose"]] },
         { title: "Giorni di riposo", rows: [["Noci", "30 g"]] },
       ],
     },
@@ -212,7 +212,7 @@ export const NUTRITION = {
     {
       name: "Merenda",
       groups: [
-        { title: "", rows: [["Yogurt proteico", "1 vasetto"], ["Frutto (vedi elenco)", "1"], ["Noci (solo giorni di allenamento)", "30 g"]] },
+        { title: "", rows: [["Yogurt proteico", "1 vasetto"], ["Frutto (vedi elenco)", "1"]] },
       ],
     },
     {
@@ -225,7 +225,8 @@ export const NUTRITION = {
   phasesNote: "Ogni 2 settimane guarda in Peso la variazione media: sotto +0,2 kg/sett. → sali di un gradino; tra 0,2 e 0,4 → resta; sopra 0,4 → scendi di un gradino. Dopo ogni aumento i primi 2–3 giorni il peso sale per acqua e glicogeno: non conta.",
   phases: [
     ["Base", "Pasta/riso 150 g a pasto", "≈2.600 kcal"],
-    ["Gradino 1", "+1 frutto a colazione e +1 a merenda", "+≈150 kcal"],
+    ["Gradino 1", "Banana + 2 gallette pre-allenamento, frutto nello yogurt", "+≈80–260 kcal"],
+    ["Gradino 1b", "+1 frutto a colazione", "+≈80 kcal"],
     ["Gradino 2", "Pasta/riso 170 g a pasto", "+≈140 kcal"],
     ["Gradino 3", "Cereali 100 g + 50 g di pane a cena", "+≈200 kcal"],
     ["Gradino 4", "Pasta/riso 190–200 g a pasto", "+≈150–200 kcal"],
