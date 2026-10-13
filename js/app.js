@@ -570,6 +570,8 @@ function vWeight() {
   <form class="card weigh" data-form="weight">
     <label class="field"><span>Data</span><input type="date" name="date" value="${todayISO()}" max="${todayISO()}" required></label>
     <label class="field"><span>Peso (kg)</span><input name="kg" inputmode="decimal" placeholder="${last ? fmtKg(last.kg) : "es. 78,5"}" required></label>
+    <label class="field"><span>Grasso % (Tanita, facoltativo)</span><input name="bf" inputmode="decimal" placeholder="${last?.bf != null ? fmtKg(last.bf) : "es. 14,9"}"></label>
+    <label class="field"><span>Giro vita cm (facoltativo)</span><input name="waist" inputmode="decimal" placeholder="${last?.waist != null ? fmtKg(last.waist) : "all'ombelico"}"></label>
     <button class="btn primary" type="submit">Salva</button>
   </form>
   <div class="stats3">
@@ -583,7 +585,7 @@ function vWeight() {
   ${bw
     .slice()
     .reverse()
-    .map((x) => `<div class="w-row"><span>${fmtDate(x.date, true)}</span><b>${fmtKg(x.kg)} kg</b><button class="icon-btn small" data-action="del-weight" data-date="${x.date}" aria-label="Elimina">${ICON.x}</button></div>`)
+    .map((x) => `<div class="w-row"><span>${fmtDate(x.date, true)}${x.bf != null || x.waist != null ? `<br><span class="muted small">${[x.bf != null ? fmtKg(x.bf) + "% grasso" : "", x.waist != null ? fmtKg(x.waist) + " cm vita" : ""].filter(Boolean).join(" · ")}</span>` : ""}</span><b>${fmtKg(x.kg)} kg</b><button class="icon-btn small" data-action="del-weight" data-date="${x.date}" aria-label="Elimina">${ICON.x}</button></div>`)
     .join("")}`;
 }
 
@@ -668,7 +670,7 @@ function vSettings() {
       <button class="btn primary" data-action="export">Esporta backup</button>
       <label class="btn">Importa backup<input type="file" accept=".json,application/json" data-action="import" hidden></label>
     </div>
-    <p class="muted small">Versione app 7 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
+    <p class="muted small">Versione app 8 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
   </div>
   <h5 class="month">Installa sul telefono</h5>
   <div class="card small">
@@ -900,7 +902,11 @@ app.addEventListener("submit", (e) => {
   if (kg == null || kg < 20 || kg > 300) { toast("Peso non valido"); return; }
   const st = S();
   st.bodyweight = st.bodyweight.filter((x) => x.date !== f.date.value);
-  st.bodyweight.push({ date: f.date.value, kg });
+  const entry = { date: f.date.value, kg };
+  const bf = num(f.bf.value), waist = num(f.waist.value);
+  if (bf != null && bf > 2 && bf < 50) entry.bf = bf;
+  if (waist != null && waist > 50 && waist < 160) entry.waist = waist;
+  st.bodyweight.push(entry);
   save();
   toast("Peso salvato");
   render();

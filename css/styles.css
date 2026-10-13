@@ -240,6 +240,7 @@ input, textarea, select { font: inherit; color: var(--text); }
 .weigh { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end; }
 .weigh .field { margin: 0; }
 .weigh .btn { grid-column: 1 / -1; }
+.weigh .field span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .w-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--card); border-radius: 10px; margin-bottom: 6px; }
 .w-row span { flex: 1; }
 

@@ -1,6 +1,6 @@
 // Service worker: rende l'app utilizzabile offline.
 // Aggiorna VERSION a ogni modifica dei file per forzare l'aggiornamento sui telefoni.
-const VERSION = "v7";
+const VERSION = "v8";
 const FILES = [
   "./", "./index.html", "./css/styles.css", "./manifest.webmanifest",
   "./js/app.js", "./js/store.js", "./js/data.js", "./js/util.js", "./js/chart.js",

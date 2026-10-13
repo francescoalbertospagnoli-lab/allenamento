@@ -61,6 +61,12 @@ if (!(state.seedV >= 3)) {
   state.seedV = 3;
 }
 
+// Migrazione 4: misurazione Tanita del 13/10/2026.
+if (!(state.seedV >= 4)) {
+  if (!state.bodyweight.some((x) => x.date === "2026-10-13")) state.bodyweight.push({ date: "2026-10-13", kg: 83.05, bf: 14.9 });
+  state.seedV = 4;
+}
+
 let saveErr = null;
 export function save() {
   try {
