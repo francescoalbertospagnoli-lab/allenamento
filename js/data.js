@@ -224,7 +224,7 @@ export const NUTRITION = {
   ],
   phasesNote: "Ogni 2 settimane guarda in Peso la variazione media: sotto +0,2 kg/sett. → sali di un gradino; tra 0,2 e 0,4 → resta; sopra 0,4 → scendi di un gradino. Dopo ogni aumento i primi 2–3 giorni il peso sale per acqua e glicogeno: non conta.",
   phases: [
-    ["Base", "Pasta/riso 150 g a pasto", "≈2.600 kcal"],
+    ["Base", "Pasta/riso 150 g a pasto", "≈2.600 kcal (mantenimento)"],
     ["Gradino 1", "Banana + 2 gallette pre-allenamento, frutto nello yogurt", "+≈80–260 kcal"],
     ["Gradino 1b", "+1 frutto a colazione", "+≈80 kcal"],
     ["Gradino 2", "Pasta/riso 170 g a pasto", "+≈140 kcal"],

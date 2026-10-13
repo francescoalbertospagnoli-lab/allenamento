@@ -55,6 +55,12 @@ if (!(state.seedV >= 2)) {
   state.seedV = 2;
 }
 
+// Migrazione 3: il dato di 84 kg del 12/10 era una stima sbagliata (peso reale ~83).
+if (!(state.seedV >= 3)) {
+  state.bodyweight = state.bodyweight.filter((x) => !(x.date === "2026-10-12" && x.kg === 84));
+  state.seedV = 3;
+}
+
 let saveErr = null;
 export function save() {
   try {
