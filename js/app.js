@@ -1,6 +1,7 @@
 import { S, save, program, replaceState, resetPrograms, lastSaveError } from "./store.js";
 import { NUTRITION } from "./data.js";
 import { lineChart } from "./chart.js";
+import { EX_IMAGES } from "./images.js";
 import { esc, uid, exKey, parseRest, fmtSec, num, fmtKg, fmtDate, fmtMonth, todayISO, fmtDuration, e1rm, daysAgo } from "./util.js";
 
 const app = document.getElementById("app");
@@ -10,6 +11,14 @@ const nav = document.getElementById("nav");
 /* ------------------------------------------------------------------ helpers */
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const IMG_BY_KEY = new Map(Object.entries(EX_IMAGES).map(([n, id]) => [exKey(n), id]));
+const thumb = (name, key = exKey(name)) => {
+  const id = IMG_BY_KEY.get(key);
+  return id
+    ? `<button class="thumb" data-action="img" data-id="${id}" data-name="${esc(name)}" aria-label="Immagine ${esc(name)}"><img src="img/ex/${id}-0.webp" alt="" loading="lazy" width="64" height="64"></button>`
+    : "";
+};
+const myNote = (key) => S().exNotes?.[key] || "";
 function labelItems(items) {
   const out = [];
   let li = -1, sub = 0;
@@ -113,6 +122,17 @@ const activeBanner = () => {
 
 /* ------------------------------------------------------------------ HOME */
 
+function backupBanner() {
+  const st = S();
+  if (!st.sessions.length && !st.bodyweight.length) return "";
+  const last = st.lastBackup ? new Date(st.lastBackup) : null;
+  const due = !last || Date.now() - last > 7 * 86400000;
+  const snoozed = st.backupSnoozeUntil && new Date(st.backupSnoozeUntil) > new Date();
+  if (!due || snoozed) return "";
+  return `<div class="banner backup"><span>${ICON.note}</span><span><b>Backup settimanale</b><br><span class="small">${last ? `Ultimo: ${fmtDate(last.toISOString())}` : "Mai fatto"} · salvalo su Drive o mandalo su WhatsApp a te stesso</span></span>
+    <span class="col"><button class="btn small primary" data-action="backup-now">Salva</button><button class="btn small ghost" data-action="backup-later">Dopo</button></span></div>`;
+}
+
 function vHome() {
   const st = S();
   const p = program();
@@ -122,6 +142,7 @@ function vHome() {
   return `
   ${header("Allenamento", { right: `<a class="icon-btn" href="#/settings" aria-label="Impostazioni">${ICON.gear}</a>` })}
   ${activeBanner()}
+  ${backupBanner()}
   <div class="seg" role="tablist">
     ${st.programs.map((x) => `<button data-action="set-program" data-id="${x.id}" class="${x.id === p.id ? "on" : ""}">${esc(x.name)}</button>`).join("")}
   </div>
@@ -162,10 +183,12 @@ function vDay(pid, di) {
     const last = lastPerformance(exKey(it.name));
     html += `<a class="ex-row ${it.group && (it.group === prevG || it.group === nextG) ? "ss" : ""}" href="#/ex/${encodeURIComponent(exKey(it.name))}">
       <span class="lt">${labels[i]}</span>
+      ${thumb(it.name)}
       <div class="ex-main">
         <h4>${esc(it.name)}</h4>
-        <p class="spec"><b>Serie:</b> ${esc(it.sets)} <b>Rip:</b> ${esc(it.reps)} <b>Rec:</b> ${esc(it.rest)}</p>
+        <p class="spec"><b>Serie:</b> ${esc(it.sets)} <b>Rip:</b> ${esc(it.reps)} <b>Rec:</b> ${esc(it.rest)}${it.kg != null ? ` <b>Kg:</b> ${fmtKg(it.kg)}` : ""}</p>
         ${it.note ? `<p class="note">${esc(it.note)}</p>` : ""}
+        ${myNote(exKey(it.name)) ? `<p class="mynote">${ICON.note} ${esc(myNote(exKey(it.name)))}</p>` : ""}
         ${last ? `<p class="last">Ultima: ${esc(setsTxt(last.sets))} <span class="muted">(${fmtDate(last.date)})</span></p>` : ""}
       </div>
     </a>`;
@@ -200,7 +223,7 @@ function startSession(pid, di) {
     exercises: d.items.map((it) => ({
       key: exKey(it.name),
       name: it.name,
-      target: { sets: it.sets, reps: it.reps, rest: it.rest, note: it.note, group: it.group },
+      target: { sets: it.sets, reps: it.reps, rest: it.rest, note: it.note, group: it.group, kg: it.kg ?? null },
       sets: Array.from({ length: Math.max(1, parseInt(it.sets) || 3) }, () => ({ kg: "", reps: "", done: false })),
     })),
   };
@@ -208,6 +231,7 @@ function startSession(pid, di) {
   go("#/session");
 }
 
+const openNotes = new Set();
 function vSession() {
   const a = S().active;
   if (!a) return `${header("Allenamento", { back: "#/" })}<div class="empty">Nessun allenamento in corso.<br><a class="btn" href="#/">Scegli un giorno</a></div>`;
@@ -225,11 +249,12 @@ function vSession() {
     html += `<section class="ex-card ${inSS ? "ss" : ""} ${allDone ? "complete" : ""}" id="ex-${ei}">
       <div class="ex-head">
         <span class="lt">${labels[ei]}</span>
+        ${thumb(ex.name, ex.key)}
         <div class="ex-main">
           <h4>${esc(ex.name)}</h4>
-          <p class="spec"><b>Serie:</b> ${esc(ex.target.sets)} <b>Rip:</b> ${esc(ex.target.reps)} <b>Rec:</b> ${esc(ex.target.rest)}</p>
+          <p class="spec"><b>Serie:</b> ${esc(ex.target.sets)} <b>Rip:</b> ${esc(ex.target.reps)} <b>Rec:</b> ${esc(ex.target.rest)}${ex.target.kg != null ? ` <b>Kg:</b> ${fmtKg(ex.target.kg)}` : ""}</p>
           ${ex.target.note ? `<p class="note">${esc(ex.target.note)}</p>` : ""}
-          ${last ? `<p class="last">Ultima volta (${fmtDate(last.date)}): ${esc(setsTxt(last.sets))}</p>` : `<p class="last muted">Prima volta: scrivi il carico che usi.</p>`}
+          ${last ? `<p class="last">Ultima volta (${fmtDate(last.date)}): ${esc(setsTxt(last.sets))}</p>` : `<p class="last muted">${ex.target.kg != null ? `Prima volta: carico di partenza ${fmtKg(ex.target.kg)} kg.` : "Prima volta: scrivi il carico che usi."}</p>`}
         </div>
       </div>
       <div class="sets">
@@ -239,7 +264,7 @@ function vSession() {
             const ref = last ? last.sets[Math.min(si, last.sets.length - 1)] : null;
             return `<div class="set-row ${s.done ? "done" : ""}" data-ei="${ei}" data-si="${si}">
               <span class="n">${si + 1}</span>
-              <input inputmode="decimal" enterkeyhint="next" data-field="kg" data-ei="${ei}" data-si="${si}" value="${esc(s.kg)}" placeholder="${ref?.kg != null ? fmtKg(ref.kg) : "kg"}" ${ref?.kg != null ? 'data-auto="1"' : ""} aria-label="Chili serie ${si + 1}">
+              <input inputmode="decimal" enterkeyhint="next" data-field="kg" data-ei="${ei}" data-si="${si}" value="${esc(s.kg)}" placeholder="${ref?.kg != null ? fmtKg(ref.kg) : ex.target.kg != null ? fmtKg(ex.target.kg) : "kg"}" ${ref?.kg != null || ex.target.kg != null ? 'data-auto="1"' : ""} aria-label="Chili serie ${si + 1}">
               <input inputmode="numeric" enterkeyhint="done" data-field="reps" data-ei="${ei}" data-si="${si}" value="${esc(s.reps)}" placeholder="${ref?.reps != null ? ref.reps : esc((String(ex.target.reps).match(/\d+/) || ["reps"])[0])}" ${ref?.reps != null ? 'data-auto="1"' : ""} aria-label="Ripetizioni serie ${si + 1}">
               <button class="chk" data-action="toggle-set" data-ei="${ei}" data-si="${si}" aria-label="Serie fatta">${ICON.check}</button>
             </div>`;
@@ -250,7 +275,12 @@ function vSession() {
         <button class="btn small ghost" data-action="add-set" data-ei="${ei}">+ Serie</button>
         <button class="btn small ghost" data-action="del-set" data-ei="${ei}" ${ex.sets.length <= 1 ? "disabled" : ""}>− Serie</button>
         <a class="btn small ghost" href="#/ex/${encodeURIComponent(ex.key)}">Storico</a>
+        <button class="btn small ghost ${myNote(ex.key) ? "has-note" : ""}" data-action="note-toggle" data-key="${esc(ex.key)}" data-ei="${ei}">${ICON.note} Note</button>
       </div>
+      <div class="note-edit" id="note-${ei}" ${openNotes.has(ex.key) ? "" : "hidden"}>
+        <textarea rows="2" data-exnote="${esc(ex.key)}" placeholder="Le tue note su questo esercizio (es. sedile 4, presa stretta…). Restano salvate anche per le prossime volte.">${esc(myNote(ex.key))}</textarea>
+      </div>
+      ${myNote(ex.key) && !openNotes.has(ex.key) ? `<p class="mynote pad">${ICON.note} ${esc(myNote(ex.key))}</p>` : ""}
     </section>`;
   });
   const mins = Math.floor((Date.now() - new Date(a.startedAt)) / 60000);
@@ -670,7 +700,7 @@ function vSettings() {
       <button class="btn primary" data-action="export">Esporta backup</button>
       <label class="btn">Importa backup<input type="file" accept=".json,application/json" data-action="import" hidden></label>
     </div>
-    <p class="muted small">Versione app 8 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
+    <p class="muted small">Versione app 9 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
   </div>
   <h5 class="month">Installa sul telefono</h5>
   <div class="card small">
@@ -689,16 +719,27 @@ function vSettings() {
   <div class="spacer"></div>`;
 }
 
-function exportBackup() {
-  const blob = new Blob([JSON.stringify(S(), null, 1)], { type: "application/json" });
+async function exportBackup() {
+  const name = `backup-allenamenti-${todayISO()}.json`;
+  const json = JSON.stringify(S(), null, 1);
+  const mark = () => { S().lastBackup = new Date().toISOString(); S().backupSnoozeUntil = null; save(); render(); };
+  // Sul telefono apre il menu Condividi (Drive, WhatsApp, Email…); altrimenti scarica il file.
+  try {
+    const file = new File([json], name, { type: "application/json" });
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file], title: "Backup allenamenti" });
+      return mark();
+    }
+  } catch (err) {
+    if (err?.name === "AbortError") return; // annullato dall'utente
+  }
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `backup-allenamenti-${todayISO()}.json`;
+  a.href = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+  a.download = name;
   document.body.appendChild(a);
   a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-  S().lastBackup = new Date().toISOString();
-  save();
+  mark();
 }
 
 /* ------------------------------------------------------------------ EDITOR */
@@ -726,10 +767,11 @@ function vEdit(pid) {
         <div class="row gap"><b class="lt small">${ii + 1}</b>
           <input class="grow" data-edit="name" data-pid="${p.id}" data-di="${di}" data-ii="${ii}" value="${esc(it.name)}" aria-label="Nome esercizio">
         </div>
-        <div class="grid4">
+        <div class="grid3">
           <label><span>Serie</span><input inputmode="numeric" data-edit="sets" data-pid="${p.id}" data-di="${di}" data-ii="${ii}" value="${esc(it.sets)}"></label>
           <label><span>Rip</span><input data-edit="reps" data-pid="${p.id}" data-di="${di}" data-ii="${ii}" value="${esc(it.reps)}"></label>
           <label><span>Recupero</span><input data-edit="rest" data-pid="${p.id}" data-di="${di}" data-ii="${ii}" value="${esc(it.rest)}"></label>
+          <label><span>Kg partenza</span><input inputmode="decimal" data-edit="kg" data-pid="${p.id}" data-di="${di}" data-ii="${ii}" value="${it.kg != null ? fmtKg(it.kg) : ""}" placeholder="—"></label>
           <label><span>Superserie</span><input data-edit="group" data-pid="${p.id}" data-di="${di}" data-ii="${ii}" value="${esc(it.group || "")}" placeholder="—"></label>
         </div>
         <input data-edit="note" data-pid="${p.id}" data-di="${di}" data-ii="${ii}" value="${esc(it.note || "")}" placeholder="Note tecniche" aria-label="Note">
@@ -785,6 +827,14 @@ app.addEventListener("click", (e) => {
       if (confirm("Eliminare definitivamente questa seduta?")) { st.sessions = st.sessions.filter((s) => s.id !== d.id); save(); go("#/history"); }
       break;
     case "metric": exMetric = d.m; render(); break;
+    case "note-toggle":
+      openNotes.has(d.key) ? openNotes.delete(d.key) : openNotes.add(d.key);
+      render();
+      if (openNotes.has(d.key)) document.querySelector(`#note-${d.ei} textarea`)?.focus();
+      break;
+    case "img": e.preventDefault(); e.stopPropagation(); showImage(d.id, d.name); break;
+    case "backup-now": exportBackup(); break;
+    case "backup-later": S().backupSnoozeUntil = new Date(Date.now() + 2 * 86400000).toISOString(); save(); render(); break;
     case "step": {
       const max = NUTRITION.phases.length - 1;
       st.carbStep = Math.max(0, Math.min(max, (st.carbStep ?? 0) + +d.d));
@@ -844,6 +894,11 @@ app.addEventListener("input", (e) => {
       s[el.dataset.field] = el.value;
     }
     saveSoon();
+  } else if (el.dataset.exnote != null) {
+    st.exNotes = st.exNotes || {};
+    const v = el.value.trim();
+    if (v) st.exNotes[el.dataset.exnote] = el.value; else delete st.exNotes[el.dataset.exnote];
+    saveSoon();
   } else if (el.dataset.logfield) {
     const s = st.sessions.find((x) => x.id === el.dataset.sid);
     s.exercises[+el.dataset.ei].sets[+el.dataset.si][el.dataset.logfield] = num(el.value);
@@ -856,7 +911,8 @@ app.addEventListener("input", (e) => {
     else if (f === "dtitle") p.days[+el.dataset.di].title = el.value;
     else {
       const it = p.days[+el.dataset.di].items[+el.dataset.ii];
-      it[f] = f === "sets" ? parseInt(el.value) || el.value : f === "group" ? el.value.trim().toUpperCase() : el.value;
+      if (f === "kg") { const n = num(el.value); if (n == null) delete it.kg; else it.kg = n; }
+      else it[f] = f === "sets" ? parseInt(el.value) || el.value : f === "group" ? el.value.trim().toUpperCase() : el.value;
     }
     saveSoon();
   } else if (el.dataset.action === "prog-search") {
@@ -912,6 +968,17 @@ app.addEventListener("submit", (e) => {
   render();
 });
 
+function showImage(id, name) {
+  const box = document.createElement("div");
+  box.className = "lightbox";
+  box.innerHTML = `<div class="lb-inner"><h4>${esc(name)}</h4>
+    <div class="lb-imgs"><img src="img/ex/${id}-0.webp" alt="Posizione iniziale"><img src="img/ex/${id}-1.webp" alt="Posizione finale"></div>
+    <p class="small muted">Inizio → fine movimento. Immagine indicativa (Free Exercise DB, pubblico dominio): la macchina della tua palestra può essere diversa.</p>
+    <button class="btn full">Chiudi</button></div>`;
+  box.addEventListener("click", (ev) => { if (ev.target === box || ev.target.closest("button")) box.remove(); });
+  document.body.appendChild(box);
+}
+
 /* ------------------------------------------------------------------ ICONS */
 
 const sv = (p, extra = "") => `<svg viewBox="0 0 24 24" aria-hidden="true" ${extra}>${p}</svg>`;
@@ -924,6 +991,7 @@ const ICON = {
   check: sv('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
   x: sv('<path d="M6 6l12 12M18 6L6 18"/>'),
   loop: sv('<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>'),
+  note: sv('<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>'),
   trophy: sv('<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>'),
 };
 

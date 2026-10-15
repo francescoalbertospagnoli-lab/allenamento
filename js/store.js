@@ -67,6 +67,31 @@ if (!(state.seedV >= 4)) {
   state.seedV = 4;
 }
 
+// Migrazione 5 (15/10/2026): nuova scheda 4 giorni. Prima salva una copia dei dati.
+if (!(state.seedV >= 5)) {
+  try { localStorage.setItem("gymlog.pre-v5", JSON.stringify(state)); } catch {}
+  const def = DEFAULT_PROGRAMS.find((p) => p.id === "p4");
+  const i = state.programs.findIndex((p) => p.id === "p4");
+  if (def) {
+    const fresh4 = withIds([structuredClone(def)])[0];
+    if (i >= 0) {
+      state.archivedPrograms = [...(state.archivedPrograms || []), { ...state.programs[i], archivedAt: new Date().toISOString() }];
+      state.programs[i] = fresh4;
+    } else state.programs.unshift(fresh4);
+  }
+  state.exNotes = state.exNotes || {};
+  state.seedV = 5;
+}
+
+// Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
+try {
+  const snapAt = localStorage.getItem("gymlog.snap.at");
+  if (!snapAt || Date.now() - new Date(snapAt) > 86400000) {
+    localStorage.setItem("gymlog.snap", JSON.stringify(state));
+    localStorage.setItem("gymlog.snap.at", new Date().toISOString());
+  }
+} catch {}
+
 let saveErr = null;
 export function save() {
   try {

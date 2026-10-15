@@ -1,9 +1,9 @@
 // Service worker: rende l'app utilizzabile offline.
 // Aggiorna VERSION a ogni modifica dei file per forzare l'aggiornamento sui telefoni.
-const VERSION = "v8";
+const VERSION = "v9";
 const FILES = [
   "./", "./index.html", "./css/styles.css", "./manifest.webmanifest",
-  "./js/app.js", "./js/store.js", "./js/data.js", "./js/util.js", "./js/chart.js",
+  "./js/app.js", "./js/store.js", "./js/data.js", "./js/util.js", "./js/chart.js", "./js/images.js",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png",
 ];
 self.addEventListener("install", (e) => {

@@ -292,3 +292,23 @@ input, textarea, select { font: inherit; color: var(--text); }
 .status.wait { background: var(--card); color: var(--text); box-shadow: var(--shadow); }
 .status .step-now { font-size: 13px; padding: 8px 0; border-top: 1px solid rgba(0,0,0,.08); }
 .status .btn { margin: 2px 0 6px; }
+
+.thumb { flex: none; width: 64px; height: 64px; margin: 10px 0 10px 10px; padding: 0; border: 0; border-radius: 10px; overflow: hidden; background: var(--input); cursor: zoom-in; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mynote { font-size: 12.5px; margin-top: 5px; color: var(--text); background: var(--input); border-radius: 8px; padding: 5px 8px; display: flex; gap: 6px; align-items: flex-start; }
+.mynote svg { width: 14px; height: 14px; margin-top: 2px; }
+.mynote.pad { margin: 0 12px 12px; }
+.note-edit { padding: 0 12px 12px; }
+.note-edit textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); font-size: 15px; resize: vertical; }
+.btn.has-note { border-color: var(--red); color: var(--red); }
+.ex-actions { flex-wrap: wrap; }
+.lightbox { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.7); display: grid; place-items: center; padding: 16px; }
+.lb-inner { background: var(--card); border-radius: 16px; padding: 14px; width: 100%; max-width: 520px; }
+.lb-inner h4 { margin-bottom: 10px; }
+.lb-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.lb-imgs img { width: 100%; border-radius: 10px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.grid3 label span { display: block; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+.banner.backup { background: var(--card); box-shadow: var(--shadow); align-items: center; }
+.banner.backup svg { color: var(--red); }
+.banner .col { display: flex; flex-direction: column; gap: 4px; }

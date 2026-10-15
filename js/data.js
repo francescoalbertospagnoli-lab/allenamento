@@ -2,13 +2,15 @@
 // Formato esercizio: [nome, serie, ripetizioni, recupero, note, superserie]
 // "superserie" = etichetta di gruppo (es. "H"): esercizi con la stessa etichetta vanno in superserie.
 
-const E = (name, sets, reps, rest, note = "", group = "") => ({ name, sets, reps, rest, note, group });
+// kg = carico di partenza (usato come suggerimento finché non c'è storico)
+const E = (name, sets, reps, rest, note = "", group = "", kg = null) => ({ name, sets, reps, rest, note, group, ...(kg != null ? { kg } : {}) });
 
 export const DEFAULT_PROGRAMS = [
   {
     id: "p4",
     name: "4 giorni",
     subtitle: "Push / Lower / Pull / Full Body",
+    version: 2,
     days: [
       {
         title: "Petto + Spalle + Tricipiti",
@@ -17,10 +19,10 @@ export const DEFAULT_PROGRAMS = [
           E("Alzate laterali con manubri", 3, "10-12", "1 min", "Eccentrica controllata."),
           E("Spinte in alto con manubri da seduto", 3, "8-10", "90 sec"),
           E("Chest press", 3, "8-12", "90 sec"),
-          E("Croci ai cavi altezza spalle", 3, "10-15", "90 sec", "Discesa 2/3\"."),
-          E("Tirate al mento al cavo basso con corda", 3, "8-12", "90 sec"),
+          E("Pectoral fly", 3, "10-15", "90 sec", "", "", 20),
+          E("Reverse fly", 3, "8-12", "90 sec", "", "", 20),
           E("French press con manubri su panca piana", 3, "8-12", "90 sec"),
-          E("Push down tricipiti schiena al macchinario", 3, "8-12", "90 sec"),
+          E("Tricipiti alla corda (Vulken)", 3, "8-12", "90 sec"),
         ],
       },
       {
@@ -28,21 +30,23 @@ export const DEFAULT_PROGRAMS = [
         items: [
           E("Pendulum squat", 3, "6-10", "2 min"),
           E("Hyperextension", 3, "8-12", "2 min"),
-          E("Leg Press a 45°", 3, "8-10", "2 min"),
-          E("Squat bulgaro con manubri", 3, "8-12", "90 sec", "Discesa 2/3\"."),
-          E("Leg Extension", 2, "8 + myo + myo", "2 min", "Fai 8 reps, aspetta 25 secondi e fai tutte quelle che riesci; ripeti la mini-serie (myo-reps)."),
-          E("Plank", 3, "1 min", "1 min"),
+          E("Leg Press a 45°", 3, "8-10", "3 min"),
+          E("RDL con bilanciere", 3, "8-12", "2 min", "", "", 60),
+          E("Leg Extension", 3, "8", "2 min", "Superserie: 3×8 a due gambe, poi subito gamba singola al massimo. Recupero dopo la gamba singola.", "E"),
+          E("Leg Extension gamba singola", 3, "max (per gamba)", "0", "In superserie con la Leg Extension: ripetizioni al massimo, prima una gamba poi l'altra.", "E"),
+          E("Pressa per polpacci", 3, "8-12", "90 sec", "", "", 100),
+          E("Addominali su panca inclinata", 3, "15", "1 min"),
         ],
       },
       {
         title: "Upper Pull + Richiamo push",
         items: [
-          E("Lat Machine con trazy bar", 3, "8-12", "90 sec"),
+          E("Lat Machine con trazy bar", 3, "8-12", "2 min"),
           E("Spinte su panca inclinata con manubri", 4, "8-12", "90 sec", "Inclinata 30°. Va bene anche Chest press incline 30° se lo preferisci."),
-          E("Rematore con manubrio su panca", 4, "8-10", "90 sec"),
-          E("Pull Down singolo al macchinario", 3, "10-12", "90 sec"),
-          E("Aperture posteriori con manubri prono su panca", 3, "10-15", "1 min"),
-          E("Hammer curl alternato", 3, "8-12", "90 sec"),
+          E("Pulley", 4, "8-10", "2 min", "", "", 60),
+          E("Pulldown presa singola al macchinario (gran dorsale)", 3, "10-12", "2 min", "", "", 30),
+          E("Reverse fly con manubri", 3, "10-15", "90 sec", "15 kg troppi: si riparte da 12,5 kg.", "", 12.5),
+          E("Hammer curl su panca inclinata", 3, "8-12", "90 sec", "", "", 10),
           E("Curl su panca Scott con bilanciere EZ", 3, "8-12", "90 sec"),
         ],
       },
@@ -50,14 +54,13 @@ export const DEFAULT_PROGRAMS = [
         title: "Full Body",
         items: [
           E("Leg Curl in piedi", 3, "10-15", "1 min"),
-          E("Hip thrust machine", 4, "8-10", "2 min"),
+          E("Affondi con bilanciere", 3, "8-12", "2 min", "", "", 20),
           E("Panca piana con bilanciere", 4, "5 (vedi note)", "150 sec", "Parti da un 4x5 con un carico circa buffer 2, poi la settimana seguente fai un 4x3 sempre buffer 2, cerca di aumentare le reps a parità di carico fintanto che non chiudi nuovamente un 5x5, dopo di che ripeti lo schema aggiornando il carico."),
           E("Military press con bilanciere", 3, "6-8", "2 min"),
-          E("Stacco rumeno con manubri", 3, "10-12", "90 sec"),
-          E("Katana extension", 4, "8-10", "90 sec", "Superserie con curl al cavo basso. Recupero dopo il curl.", "F"),
-          E("Curl bicipiti al cavo basso con asta dritta", 4, "6-10", "0", "In superserie con la Katana extension.", "F"),
-          E("Alzate laterali singole al cavo da dietro", 3, "10-12", "90 sec", "Fermo 1\" in picco di contrazione."),
-          E("Leg raises sui gomiti alle parallele", 3, "10-15", "1 min"),
+          E("Pressa per polpacci", 3, "8-12", "90 sec", "", "", 100),
+          E("Curl alternato con manubri", 3, "8-12", "90 sec"),
+          E("Tricipiti alla corda (Vulken)", 3, "8-12", "90 sec"),
+          E("Addominali su panca inclinata", 3, "max", "1 min"),
         ],
       },
     ],
