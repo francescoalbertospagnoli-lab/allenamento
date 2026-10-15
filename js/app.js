@@ -2,7 +2,7 @@ import { S, save, program, replaceState, resetPrograms, lastSaveError } from "./
 import { NUTRITION } from "./data.js";
 import { lineChart } from "./chart.js";
 import { EX_IMAGES } from "./images.js";
-import { startSync, pushNow, meta as syncMeta, recoveryCode, restoreFromCode } from "./sync.js";
+import { startSync, pushNow, meta as syncMeta, recoveryCode, restoreFromCode, SYNC_ENABLED } from "./sync.js";
 import { esc, uid, exKey, parseRest, fmtSec, num, fmtKg, fmtDate, fmtMonth, todayISO, fmtDuration, e1rm, daysAgo } from "./util.js";
 
 const app = document.getElementById("app");
@@ -725,6 +725,7 @@ function vSettings() {
 }
 
 function cloudCard() {
+  if (!SYNC_ENABLED) return `<div class="card"><p class="small"><b>In attivazione</b> — appena il database è pronto, i dati verranno salvati da soli. Nel frattempo usa il backup su file qui sotto.</p></div>`;
   const m = syncMeta();
   const ok = m.at && (!m.errAt || new Date(m.at) > new Date(m.errAt));
   return `<div class="card">

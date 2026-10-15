@@ -5,6 +5,8 @@ const URL_ = "https://njwmkxavwlpagrghmgfx.supabase.co/rest/v1/rpc/";
 // Chiave pubblica (pensata per stare nel codice): da sola non dà accesso ai dati, serve anche il codice segreto.
 const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qd21reGF2d2xwYWdyZ2htZ2Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwOTA2NjAsImV4cCI6MjEwNzY2NjY2MH0.sN8yBKzyXVZyFkcIaEhSpBnSNXcIcHctOuhuCb4vqc8";
 const META = "gymlog.sync.meta";
+// Si attiva quando il database è pronto.
+export const SYNC_ENABLED = false;
 
 const rnd = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => "abcdefghijkmnpqrstuvwxyz23456789"[b % 32]).join("");
 
@@ -39,6 +41,7 @@ async function rpc(fn, body, keepalive = false) {
 
 let busy = false;
 export async function pushNow(keepalive = false) {
+  if (!SYNC_ENABLED) return;
   if (busy || !navigator.onLine) return;
   busy = true;
   try {
@@ -73,6 +76,7 @@ export async function restoreFromCode(code) {
 
 // Avvio: salva a ogni modifica (dopo 15 s), quando l'app va in background e all'apertura.
 export function startSync() {
+  if (!SYNC_ENABLED) return;
   creds();
   window.addEventListener("gymlog:saved", () => schedule());
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") { clearTimeout(t); pushNow(true); } });
