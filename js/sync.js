@@ -6,7 +6,7 @@ const URL_ = "https://njwmkxavwlpagrghmgfx.supabase.co/rest/v1/rpc/";
 const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qd21reGF2d2xwYWdyZ2htZ2Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwOTA2NjAsImV4cCI6MjEwNzY2NjY2MH0.sN8yBKzyXVZyFkcIaEhSpBnSNXcIcHctOuhuCb4vqc8";
 const META = "gymlog.sync.meta";
 // Si attiva quando il database è pronto.
-export const SYNC_ENABLED = false;
+export const SYNC_ENABLED = true;
 
 const rnd = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => "abcdefghijkmnpqrstuvwxyz23456789"[b % 32]).join("");
 
