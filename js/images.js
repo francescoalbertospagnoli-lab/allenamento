@@ -23,7 +23,7 @@ export const EX_IMAGES = {
  "Curl su panca Scott con bilanciere EZ": "Preacher_Curl",
  "Estensioni tricipiti sopra la testa al cavo basso": "Cable_Rope_Overhead_Triceps_Extension",
  "French press 1 manubrio da seduto": "Dumbbell_One-Arm_Triceps_Extension",
- "French press con manubri su panca piana": "Decline_Dumbbell_Triceps_Extension",
+ "French press con manubri su panca piana": "Lying_Dumbbell_Tricep_Extension",
  "Hammer curl alternato": "Alternate_Hammer_Curl",
  "Hammer curl su panca inclinata": "Incline_Hammer_Curls",
  "Hyperextension": "Hyperextensions_Back_Extensions",
@@ -39,13 +39,13 @@ export const EX_IMAGES = {
  "Leg Extension gamba singola": "Single-Leg_Leg_Extension",
  "Leg Extension singola": "Single-Leg_Leg_Extension",
  "Leg Press a 45°": "Leg_Press",
- "Military press con bilanciere": "Standing_Military_Press",
+ "Military press con bilanciere": "Seated_Barbell_Military_Press",
  "Panca 30° al multipower": "Smith_Machine_Incline_Bench_Press",
  "Panca inclinata con bilanciere": "Barbell_Incline_Bench_Press_-_Medium_Grip",
  "Panca piana con bilanciere": "Barbell_Bench_Press_-_Medium_Grip",
  "Pectoral fly": "Butterfly",
  "Pendulum squat": "Hack_Squat",
- "Pressa per polpacci": "Calf_Press_On_The_Leg_Press_Machine",
+ "Pressa per polpacci": "Standing_Calf_Raises",
  "Pull Down cavo alto con barra": "Straight-Arm_Pulldown",
  "Pull Down cavo alto con corda": "Rope_Straight-Arm_Pulldown",
  "Pulldown presa singola al macchinario (gran dorsale)": "One_Arm_Lat_Pulldown",
@@ -84,5 +84,6 @@ export const EX_IMAGES = {
  "Hip thrust machine": "Barbell_Hip_Thrust",
  "Curl bicipiti al cavo basso con asta dritta": "Standing_Biceps_Cable_Curl",
  "Alzate laterali singole al cavo da dietro": "Cable_Seated_Lateral_Raise",
- "Leg raises sui gomiti alle parallele": "Knee_Hip_Raise_On_Parallel_Bars"
+ "Leg raises sui gomiti alle parallele": "Knee_Hip_Raise_On_Parallel_Bars",
+ "Reverse fly alla macchina (pec deck)": "Reverse_Machine_Flyes"
 };

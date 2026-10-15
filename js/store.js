@@ -97,6 +97,22 @@ if (!(state.seedV >= 6)) {
   state.seedV = 6;
 }
 
+// Migrazione 7: reverse fly alla macchina (pec deck), note su military, french press e pressa polpacci.
+if (!(state.seedV >= 7)) {
+  const NEW = "Reverse fly alla macchina (pec deck)", NK = exKey(NEW), OK = exKey("Reverse fly con manubri");
+  const notes = { "military press con bilanciere": "Da seduto.", "french press con manubri su panca piana": "Panca orizzontale.", "pressa per polpacci": "In piedi alla hack squat machine." };
+  const p4 = state.programs.find((p) => p.id === "p4");
+  if (p4) for (const d of p4.days) for (const it of d.items) {
+    if (exKey(it.name) === OK) { it.name = NEW; it.note = "Stessa macchina del pectoral fly, seduto al contrario."; }
+    const n = notes[exKey(it.name)];
+    if (n && !it.note) it.note = n;
+  }
+  for (const se of state.sessions) for (const e of se.exercises) if (e.key === OK) { e.key = NK; e.name = NEW; }
+  if (state.active) for (const e of state.active.exercises) if (e.key === OK) { e.key = NK; e.name = NEW; }
+  if (state.exNotes?.[OK]) { state.exNotes[NK] = state.exNotes[NK] || state.exNotes[OK]; delete state.exNotes[OK]; }
+  state.seedV = 7;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
