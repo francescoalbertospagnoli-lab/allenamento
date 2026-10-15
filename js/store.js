@@ -83,6 +83,20 @@ if (!(state.seedV >= 5)) {
   state.seedV = 5;
 }
 
+// Migrazione 6: reverse fly unico (manubri 12,5 kg) e leg extension 3 min di recupero.
+if (!(state.seedV >= 6)) {
+  const p4 = state.programs.find((p) => p.id === "p4");
+  if (p4) for (const d of p4.days) for (const it of d.items) {
+    if (it.name === "Reverse fly") { it.name = "Reverse fly con manubri"; it.kg = 12.5; }
+    if (it.name === "Reverse fly con manubri") { it.kg = 12.5; if (it.note === "15 kg troppi: si riparte da 12,5 kg.") it.note = ""; }
+    if (it.name === "Leg Extension" && it.group === "E" && it.rest === "2 min") it.rest = "3 min";
+  }
+  for (const se of state.sessions) for (const e of se.exercises) if (e.key === "reverse fly") { e.key = "reverse fly con manubri"; e.name = "Reverse fly con manubri"; }
+  if (state.active) for (const e of state.active.exercises) if (e.key === "reverse fly") { e.key = "reverse fly con manubri"; e.name = "Reverse fly con manubri"; e.target.kg = 12.5; }
+  if (state.exNotes?.["reverse fly"] && !state.exNotes["reverse fly con manubri"]) state.exNotes["reverse fly con manubri"] = state.exNotes["reverse fly"];
+  state.seedV = 6;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
