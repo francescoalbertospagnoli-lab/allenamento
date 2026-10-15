@@ -2,6 +2,7 @@ import { S, save, program, replaceState, resetPrograms, lastSaveError } from "./
 import { NUTRITION } from "./data.js";
 import { lineChart } from "./chart.js";
 import { EX_IMAGES } from "./images.js";
+import { startSync, pushNow, meta as syncMeta, recoveryCode, restoreFromCode } from "./sync.js";
 import { esc, uid, exKey, parseRest, fmtSec, num, fmtKg, fmtDate, fmtMonth, todayISO, fmtDuration, e1rm, daysAgo } from "./util.js";
 
 const app = document.getElementById("app");
@@ -125,6 +126,8 @@ const activeBanner = () => {
 function backupBanner() {
   const st = S();
   if (!st.sessions.length && !st.bodyweight.length) return "";
+  const sm = syncMeta();
+  if (sm.at && Date.now() - new Date(sm.at) < 7 * 86400000) return "";
   const last = st.lastBackup ? new Date(st.lastBackup) : null;
   const due = !last || Date.now() - last > 7 * 86400000;
   const snoozed = st.backupSnoozeUntil && new Date(st.backupSnoozeUntil) > new Date();
@@ -693,14 +696,16 @@ function vSettings() {
     ${st.programs.map((p) => `<a href="#/edit/${p.id}"><span>${esc(p.name)} <span class="muted small">· ${esc(p.subtitle || p.days.length + " giorni")}</span></span>${p.id === st.activeProgramId ? `<span class="pill">attiva</span>` : ""}<span class="chev">${ICON.chev}</span></a>`).join("")}
     <button data-action="new-program">+ Nuova scheda vuota</button>
   </div>
-  <h5 class="month">Backup dei dati</h5>
+  <h5 class="month">Backup automatico nel cloud</h5>
+  ${cloudCard()}
+  <h5 class="month">Backup su file</h5>
   <div class="card">
     <p class="small">I dati sono salvati <b>solo su questo telefono</b>. Esporta un backup ogni tanto (es. su Drive o WhatsApp a te stesso): se cambi telefono o cancelli i dati del browser lo reimporti da qui.</p>
     <div class="row gap wrap">
       <button class="btn primary" data-action="export">Esporta backup</button>
       <label class="btn">Importa backup<input type="file" accept=".json,application/json" data-action="import" hidden></label>
     </div>
-    <p class="muted small">Versione app 10 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
+    <p class="muted small">Versione app 11 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
   </div>
   <h5 class="month">Installa sul telefono</h5>
   <div class="card small">
@@ -717,6 +722,24 @@ function vSettings() {
     <p class="muted small">"Ripristina schede" non tocca lo storico.</p>
   </div>
   <div class="spacer"></div>`;
+}
+
+function cloudCard() {
+  const m = syncMeta();
+  const ok = m.at && (!m.errAt || new Date(m.at) > new Date(m.errAt));
+  return `<div class="card">
+    <p class="small"><b class="${ok ? "ok-txt" : "warn-txt"}">${ok ? "Attivo" : m.err ? "Non riuscito" : "In attesa del primo salvataggio"}</b>${m.at ? ` · ultimo salvataggio ${fmtDate(m.at)} ${new Date(m.at).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}` : ""}</p>
+    ${!ok && m.err ? `<p class="small muted">Errore: ${esc(m.err)}</p>` : ""}
+    <p class="small">Salva da solo ogni modifica (serve internet). Tiene anche una copia al giorno degli ultimi 60 giorni.</p>
+    <div class="row gap wrap"><button class="btn small" data-action="sync-now">Salva ora</button></div>
+    <p class="small" style="margin-top:12px"><b>Codice di recupero</b> — salvalo (screenshot o WhatsApp a te stesso): serve per ritrovare i dati su un altro telefono.</p>
+    <div class="code-box">${esc(recoveryCode())}</div>
+    <div class="row gap wrap"><button class="btn small" data-action="copy-code">Copia codice</button></div>
+    <details class="restore"><summary class="small">Ripristina da un codice</summary>
+      <input class="search" data-role="restore-code" placeholder="Incolla il codice di recupero">
+      <button class="btn small danger" data-action="restore-cloud">Ripristina (sostituisce i dati di questo telefono)</button>
+    </details>
+  </div>`;
 }
 
 async function exportBackup() {
@@ -834,6 +857,15 @@ app.addEventListener("click", (e) => {
       break;
     case "img": e.preventDefault(); e.stopPropagation(); showImage(d.id, d.name); break;
     case "backup-now": exportBackup(); break;
+    case "sync-now": pushNow().then(render); break;
+    case "copy-code": navigator.clipboard?.writeText(recoveryCode()).then(() => toast("Codice copiato"), () => toast("Copia non riuscita: fai uno screenshot")); break;
+    case "restore-cloud": {
+      const code = app.querySelector('[data-role="restore-code"]')?.value;
+      if (!code) { toast("Incolla il codice"); break; }
+      if (!confirm("Ripristinare i dati dal cloud? Quelli di questo telefono verranno sostituiti.")) break;
+      restoreFromCode(code).then(() => { toast("Dati ripristinati"); go("#/history"); render(); }, (err) => alert("Ripristino non riuscito: " + err.message));
+      break;
+    }
     case "backup-later": S().backupSnoozeUntil = new Date(Date.now() + 2 * 86400000).toISOString(); save(); render(); break;
     case "step": {
       const max = NUTRITION.phases.length - 1;
@@ -999,6 +1031,8 @@ const ICON = {
 
 render();
 keepAwake();
+startSync();
+window.addEventListener("gymlog:sync", () => { if (route()[0] === "settings") render(); });
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("./sw.js").catch(() => {});
 }

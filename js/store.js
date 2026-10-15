@@ -111,6 +111,7 @@ export function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(state));
     saveErr = null;
+    window.dispatchEvent(new Event("gymlog:saved"));
   } catch (e) {
     saveErr = e;
     console.error("Salvataggio fallito", e);

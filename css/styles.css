@@ -312,3 +312,10 @@ input, textarea, select { font: inherit; color: var(--text); }
 .banner.backup { background: var(--card); box-shadow: var(--shadow); align-items: center; }
 .banner.backup svg { color: var(--red); }
 .banner .col { display: flex; flex-direction: column; gap: 4px; }
+
+.code-box { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; background: var(--input); border-radius: 8px; padding: 10px; word-break: break-all; margin: 6px 0 8px; user-select: all; }
+.ok-txt { color: var(--ok); }
+.warn-txt { color: var(--red); }
+.restore { margin-top: 12px; }
+.restore summary { cursor: pointer; color: var(--muted); padding: 4px 0; }
+.restore .search { margin: 8px 0; }
