@@ -113,6 +113,16 @@ if (!(state.seedV >= 7)) {
   state.seedV = 7;
 }
 
+// Migrazione 8 (18/10/2026): recuperi Giorno 4.
+if (!(state.seedV >= 8)) {
+  const d4 = state.programs.find((p) => p.id === "p4")?.days[3];
+  const R = { "leg curl in piedi": "90 sec", "panca piana con bilanciere": "3 min", "curl alternato con manubri": "2 min" };
+  if (d4) for (const it of d4.items) { const r = R[exKey(it.name)]; if (r) it.rest = r; }
+  if (state.active?.programId === "p4" && state.active.dayIndex === 3)
+    for (const e of state.active.exercises) { const r = R[e.key]; if (r) e.target.rest = r; }
+  state.seedV = 8;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
