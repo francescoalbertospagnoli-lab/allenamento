@@ -123,6 +123,16 @@ if (!(state.seedV >= 8)) {
   state.seedV = 8;
 }
 
+// Migrazione 9 (26/10/2026): alzate laterali 2 min; gradino 1 iniziato il 13/10 (prova +/- del 26/10 annullata).
+if (!(state.seedV >= 9)) {
+  const d1 = state.programs.find((p) => p.id === "p4")?.days[0];
+  if (d1) for (const it of d1.items) if (exKey(it.name) === "alzate laterali con manubri") it.rest = "2 min";
+  if (state.active?.programId === "p4" && state.active.dayIndex === 0)
+    for (const e of state.active.exercises) if (e.key === "alzate laterali con manubri") e.target.rest = "2 min";
+  if (state.carbStep === 1 && String(state.carbStepDate || "").startsWith("2026-10-26")) state.carbStepDate = "2026-10-13T06:00:00.000Z";
+  state.seedV = 9;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");

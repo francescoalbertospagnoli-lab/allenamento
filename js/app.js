@@ -633,7 +633,7 @@ function stepCard(slope, n, span) {
     cls = "wait"; title = "Servono più pesate";
     msg = `Pesati ogni mattina: dopo almeno 4 pesate su 10+ giorni ti dico se aumentare (ora: ${n}${n ? `, su ${Math.round(span)} giorni` : ""}).`;
   } else if (wait) {
-    cls = "wait"; title = `Aspetta ancora ${14 - since} giorni`;
+    cls = "wait"; title = `Aspetta ancora ${14 - since} ${14 - since === 1 ? "giorno" : "giorni"}`;
     msg = `Hai cambiato gradino ${since === 0 ? "oggi" : `${since} giorni fa`}: i primi giorni il peso sale per acqua e glicogeno. Valuta dopo 2 settimane.`;
   } else if (slope < 0.2) {
     cls = "low"; title = "Sotto obiettivo → sali di un gradino";
@@ -705,7 +705,7 @@ function vSettings() {
       <button class="btn primary" data-action="export">Esporta backup</button>
       <label class="btn">Importa backup<input type="file" accept=".json,application/json" data-action="import" hidden></label>
     </div>
-    <p class="muted small">Versione app 14 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
+    <p class="muted small">Versione app 15 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
   </div>
   <h5 class="month">Installa sul telefono</h5>
   <div class="card small">
@@ -870,8 +870,17 @@ app.addEventListener("click", (e) => {
     case "backup-later": S().backupSnoozeUntil = new Date(Date.now() + 2 * 86400000).toISOString(); save(); render(); break;
     case "step": {
       const max = NUTRITION.phases.length - 1;
-      st.carbStep = Math.max(0, Math.min(max, (st.carbStep ?? 0) + +d.d));
-      st.carbStepDate = new Date().toISOString();
+      const prev = { step: st.carbStep ?? 0, date: st.carbStepDate || null };
+      const next = Math.max(0, Math.min(max, prev.step + +d.d));
+      if (next === prev.step) break;
+      const back = st.carbStepPrev;
+      // Se torni al gradino di prima entro 24 ore, è un ripensamento: si ripristina la data originale.
+      if (back && back.step === next && Date.now() - new Date(back.changedAt) < 86400000) {
+        st.carbStep = next; st.carbStepDate = back.date; st.carbStepPrev = null;
+      } else {
+        st.carbStep = next; st.carbStepDate = new Date().toISOString();
+        st.carbStepPrev = { ...prev, changedAt: st.carbStepDate };
+      }
       save(); render(); break;
     }
     case "del-weight": st.bodyweight = st.bodyweight.filter((x) => x.date !== d.date); save(); render(); break;

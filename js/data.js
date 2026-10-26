@@ -16,7 +16,7 @@ export const DEFAULT_PROGRAMS = [
         title: "Petto + Spalle + Tricipiti",
         items: [
           E("Panca 30° al multipower", 4, "6-10", "150 sec", "30° — lieve fermo al petto."),
-          E("Alzate laterali con manubri", 3, "10-12", "1 min", "Eccentrica controllata."),
+          E("Alzate laterali con manubri", 3, "10-12", "2 min", "Eccentrica controllata."),
           E("Spinte in alto con manubri da seduto", 3, "8-10", "90 sec"),
           E("Chest press", 3, "8-12", "90 sec"),
           E("Pectoral fly", 3, "10-15", "90 sec", "", "", 20),
