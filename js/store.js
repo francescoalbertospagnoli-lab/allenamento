@@ -133,6 +133,15 @@ if (!(state.seedV >= 9)) {
   state.seedV = 9;
 }
 
+// Migrazione 10 (30/10/2026): Giorno 3 esercizio B recupero 2 min.
+if (!(state.seedV >= 10)) {
+  const d3 = state.programs.find((p) => p.id === "p4")?.days[2];
+  if (d3) for (const it of d3.items) if (exKey(it.name) === "spinte su panca inclinata con manubri") it.rest = "2 min";
+  if (state.active?.programId === "p4" && state.active.dayIndex === 2)
+    for (const e of state.active.exercises) if (e.key === "spinte su panca inclinata con manubri") e.target.rest = "2 min";
+  state.seedV = 10;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");

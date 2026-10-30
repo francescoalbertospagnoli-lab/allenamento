@@ -42,7 +42,7 @@ export const DEFAULT_PROGRAMS = [
         title: "Upper Pull + Richiamo push",
         items: [
           E("Lat Machine con trazy bar", 3, "8-12", "2 min"),
-          E("Spinte su panca inclinata con manubri", 4, "8-12", "90 sec", "Inclinata 30°. Va bene anche Chest press incline 30° se lo preferisci."),
+          E("Spinte su panca inclinata con manubri", 4, "8-12", "2 min", "Inclinata 30°. Va bene anche Chest press incline 30° se lo preferisci."),
           E("Pulley", 4, "8-10", "2 min", "", "", 60),
           E("Pulldown presa singola al macchinario (gran dorsale)", 3, "10-12", "2 min", "", "", 30),
           E("Reverse fly alla macchina (pec deck)", 3, "10-15", "90 sec", "Stessa macchina del pectoral fly, seduto al contrario.", "", 12.5),

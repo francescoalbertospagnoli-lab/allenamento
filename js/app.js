@@ -19,7 +19,20 @@ const thumb = (name, key = exKey(name)) => {
     ? `<button class="thumb" data-action="img" data-id="${id}" data-name="${esc(name)}" aria-label="Immagine ${esc(name)}"><img src="img/ex/${id}-0.webp" alt="" loading="lazy" width="64" height="64"></button>`
     : "";
 };
-const myNote = (key) => S().exNotes?.[key] || "";
+// Note per esercizio: ogni allenamento ha la sua nota; si vedono anche quelle precedenti.
+function prevNotes(key, excludeId = null) {
+  const out = [];
+  for (const s of [...S().sessions].sort((a, b) => new Date(b.startedAt) - new Date(a.startedAt))) {
+    if (s.id === excludeId) continue;
+    const e = s.exercises.find((x) => x.key === key);
+    if (e?.note?.trim()) out.push({ date: s.startedAt, text: e.note.trim() });
+  }
+  const legacy = S().exNotes?.[key];
+  if (legacy?.trim()) out.push({ date: null, text: legacy.trim() });
+  return out;
+}
+const myNote = (key) => prevNotes(key)[0]?.text || "";
+const noteLine = (n) => `<p class="mynote">${ICON.note} <span>${n.date ? `<b>${fmtDate(n.date)}:</b> ` : ""}${esc(n.text)}</span></p>`;
 function labelItems(items) {
   const out = [];
   let li = -1, sub = 0;
@@ -191,7 +204,7 @@ function vDay(pid, di) {
         <h4>${esc(it.name)}</h4>
         <p class="spec"><b>Serie:</b> ${esc(it.sets)} <b>Rip:</b> ${esc(it.reps)} <b>Rec:</b> ${esc(it.rest)}${it.kg != null ? ` <b>Kg:</b> ${fmtKg(it.kg)}` : ""}</p>
         ${it.note ? `<p class="note">${esc(it.note)}</p>` : ""}
-        ${myNote(exKey(it.name)) ? `<p class="mynote">${ICON.note} ${esc(myNote(exKey(it.name)))}</p>` : ""}
+        ${prevNotes(exKey(it.name))[0] ? noteLine(prevNotes(exKey(it.name))[0]) : ""}
         ${last ? `<p class="last">Ultima: ${esc(setsTxt(last.sets))} <span class="muted">(${fmtDate(last.date)})</span></p>` : ""}
       </div>
     </a>`;
@@ -278,12 +291,13 @@ function vSession() {
         <button class="btn small ghost" data-action="add-set" data-ei="${ei}">+ Serie</button>
         <button class="btn small ghost" data-action="del-set" data-ei="${ei}" ${ex.sets.length <= 1 ? "disabled" : ""}>− Serie</button>
         <a class="btn small ghost" href="#/ex/${encodeURIComponent(ex.key)}">Storico</a>
-        <button class="btn small ghost ${myNote(ex.key) ? "has-note" : ""}" data-action="note-toggle" data-key="${esc(ex.key)}" data-ei="${ei}">${ICON.note} Note</button>
+        <button class="btn small ghost ${ex.note || prevNotes(ex.key).length ? "has-note" : ""}" data-action="note-toggle" data-key="${esc(ex.key)}" data-ei="${ei}">${ICON.note} Note${prevNotes(ex.key).length ? ` (${prevNotes(ex.key).length})` : ""}</button>
       </div>
       <div class="note-edit" id="note-${ei}" ${openNotes.has(ex.key) ? "" : "hidden"}>
-        <textarea rows="2" data-exnote="${esc(ex.key)}" placeholder="Le tue note su questo esercizio (es. sedile 4, presa stretta…). Restano salvate anche per le prossime volte.">${esc(myNote(ex.key))}</textarea>
+        <textarea rows="2" data-sessnote="${ei}" placeholder="Nota di oggi (es. 25 per lato, sedile 4…)">${esc(ex.note || "")}</textarea>
+        ${prevNotes(ex.key).length ? `<p class="small muted notes-title">Note precedenti</p>${prevNotes(ex.key).slice(0, 8).map(noteLine).join("")}` : `<p class="small muted">Nessuna nota precedente.</p>`}
       </div>
-      ${myNote(ex.key) && !openNotes.has(ex.key) ? `<p class="mynote pad">${ICON.note} ${esc(myNote(ex.key))}</p>` : ""}
+      ${!openNotes.has(ex.key) && (ex.note || prevNotes(ex.key)[0]) ? `<div class="pad-notes">${ex.note ? noteLine({ date: new Date().toISOString(), text: ex.note }) : noteLine(prevNotes(ex.key)[0])}</div>` : ""}
     </section>`;
   });
   const mins = Math.floor((Date.now() - new Date(a.startedAt)) / 60000);
@@ -355,6 +369,7 @@ function finishSession() {
     .map((e) => ({
       key: e.key,
       name: e.name,
+      ...(e.note?.trim() ? { note: e.note.trim() } : {}),
       sets: e.sets.filter((x) => x.done || (num(x.reps) != null)).map((x) => ({ kg: num(x.kg), reps: num(x.reps) })).filter((x) => x.reps != null),
     }))
     .filter((e) => e.sets.length);
@@ -494,7 +509,7 @@ function vLog(id) {
   ${s.exercises
     .map(
       (e, ei) => `<section class="ex-card">
-      <div class="ex-head"><div class="ex-main"><a href="#/ex/${encodeURIComponent(e.key)}"><h4>${esc(e.name)} ›</h4></a></div></div>
+      <div class="ex-head"><div class="ex-main"><a href="#/ex/${encodeURIComponent(e.key)}"><h4>${esc(e.name)} ›</h4></a>${e.note ? `<p class="mynote">${ICON.note} <span>${esc(e.note)}</span></p>` : ""}</div></div>
       <div class="sets">
         <div class="set-row head"><span>Serie</span><span>kg</span><span>reps</span><span></span></div>
         ${e.sets
@@ -579,6 +594,24 @@ function findNameInPrograms(key) {
 
 /* ------------------------------------------------------------------ WEIGHT */
 
+function weeklyTable(bw) {
+  // medie per settimana (lunedì–domenica), ultime 5
+  const wk = new Map();
+  for (const x of bw) {
+    const d = new Date(x.date + "T12:00:00"); const mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    const k = mon.toISOString().slice(0, 10);
+    if (!wk.has(k)) wk.set(k, []);
+    wk.get(k).push(x.kg);
+  }
+  const rows = [...wk.entries()].sort((a, b) => a[0].localeCompare(b[0])).slice(-5)
+    .map(([k, v]) => ({ k, avg: v.reduce((a, b) => a + b, 0) / v.length, n: v.length }));
+  if (rows.length < 2) return "";
+  return `<h5 class="month">Medie settimanali</h5><div class="card"><table class="phases">${rows.map((r, i) => {
+    const diff = i ? r.avg - rows[i - 1].avg : null;
+    return `<tr><td>dal ${fmtDate(r.k)}</td><td>${fmtKg(Math.round(r.avg * 100) / 100)} kg <span class="muted small">(${r.n} pesate)</span></td><td>${diff == null ? "" : (diff > 0 ? "+" : "") + fmtKg(Math.round(diff * 100) / 100)}</td></tr>`;
+  }).join("")}</table><p class="muted small">Obiettivo: +0,2/+0,4 kg da una settimana all'altra.</p></div>`;
+}
+
 function vWeight() {
   const bw = [...S().bodyweight].sort((a, b) => a.date.localeCompare(b.date));
   const last = bw.at(-1);
@@ -587,8 +620,14 @@ function vWeight() {
     const r = bw.filter((x) => new Date(x.date).getTime() >= from);
     return r.length ? r.reduce((a, x) => a + x.kg, 0) / r.length : null;
   };
-  // pendenza (kg/settimana) negli ultimi 28 giorni, regressione lineare
-  const r28 = bw.filter((x) => Date.now() - new Date(x.date) <= 28 * 86400000);
+  // Tendenza (kg/settimana): regressione sugli ultimi 21 giorni, escludendo la prima settimana
+  // dopo un cambio di gradino (lì il peso sale per acqua e glicogeno).
+  const stepAt = S().carbStepDate ? new Date(S().carbStepDate).getTime() + 7 * 86400000 : 0;
+  const from = Math.max(Date.now() - 21 * 86400000, stepAt);
+  const fromDay = new Date(from).toISOString().slice(0, 10);
+  const spanOf = (r) => (r.length ? (new Date(r.at(-1).date) - new Date(r[0].date)) / 86400000 : 0);
+  let r28 = bw.filter((x) => x.date >= fromDay);
+  if (r28.length < 4 || spanOf(r28) < 10) r28 = bw.filter((x) => Date.now() - new Date(x.date) <= 28 * 86400000);
   let slope = null;
   const span = r28.length ? (new Date(r28.at(-1).date) - new Date(r28[0].date)) / 86400000 : 0;
   if (r28.length >= 4 && span >= 10) {
@@ -610,10 +649,11 @@ function vWeight() {
   <div class="stats3">
     <div><b>${last ? fmtKg(last.kg) : "–"}</b><span>ultimo</span></div>
     <div><b>${a7 ? fmtKg(Math.round(a7 * 10) / 10) : "–"}</b><span>media 7 gg</span></div>
-    <div><b>${slope != null ? (slope > 0 ? "+" : "") + fmtKg(Math.round(slope * 100) / 100) : "–"}</b><span>kg/sett. (28 gg)</span></div>
+    <div><b>${slope != null ? (slope > 0 ? "+" : "") + fmtKg(Math.round(slope * 100) / 100) : "–"}</b><span>kg/sett. (tendenza)</span></div>
   </div>
   ${stepCard(slope, r28.length, span)}
   ${pct != null ? `<p class="muted small center">Variazione ${pct > 0 ? "+" : ""}${(Math.round(pct * 100) / 100).toLocaleString("it-IT")}% del peso a settimana. In fase di massa il riferimento in letteratura è circa +0,25–0,5%/sett.</p>` : `<p class="muted small center">Pesati al mattino, a digiuno, dopo il bagno. Conta la media settimanale, non il singolo dato.</p>`}
+  ${weeklyTable(bw)}
   <div class="card">${lineChart(bw.map((x) => ({ t: x.date, y: x.kg })))}</div>
   ${bw
     .slice()
@@ -705,7 +745,7 @@ function vSettings() {
       <button class="btn primary" data-action="export">Esporta backup</button>
       <label class="btn">Importa backup<input type="file" accept=".json,application/json" data-action="import" hidden></label>
     </div>
-    <p class="muted small">Versione app 15 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
+    <p class="muted small">Versione app 16 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
   </div>
   <h5 class="month">Installa sul telefono</h5>
   <div class="card small">
@@ -935,6 +975,9 @@ app.addEventListener("input", (e) => {
       const s = st.active.exercises[+el.dataset.ei].sets[+el.dataset.si];
       s[el.dataset.field] = el.value;
     }
+    saveSoon();
+  } else if (el.dataset.sessnote != null && st.active) {
+    st.active.exercises[+el.dataset.sessnote].note = el.value;
     saveSoon();
   } else if (el.dataset.exnote != null) {
     st.exNotes = st.exNotes || {};

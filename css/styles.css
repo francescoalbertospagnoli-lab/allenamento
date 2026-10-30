@@ -319,3 +319,8 @@ input, textarea, select { font: inherit; color: var(--text); }
 .restore { margin-top: 12px; }
 .restore summary { cursor: pointer; color: var(--muted); padding: 4px 0; }
 .restore .search { margin: 8px 0; }
+
+.mynote span { flex: 1; }
+.pad-notes { padding: 0 12px 12px; }
+.notes-title { margin: 10px 0 2px; }
+.note-edit .mynote { margin-top: 6px; }
