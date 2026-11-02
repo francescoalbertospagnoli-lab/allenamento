@@ -142,6 +142,33 @@ if (!(state.seedV >= 10)) {
   state.seedV = 10;
 }
 
+// Migrazione 11 (02/11/2026): G4 RDL al posto del leg curl e panca prima degli affondi;
+// G1 spinte seduto 2 min, tirata singola al cavo al posto della french press (seduta del 2/11 corretta).
+if (!(state.seedV >= 11)) {
+  try { localStorage.setItem("gymlog.pre-v11", JSON.stringify(state)); } catch {}
+  const NEWT = "Tirata singola al cavo per tricipiti";
+  const p4 = state.programs.find((p) => p.id === "p4");
+  const def4 = DEFAULT_PROGRAMS.find((p) => p.id === "p4");
+  if (p4 && def4) {
+    const d1 = p4.days[0];
+    for (const it of d1.items) if (exKey(it.name) === "spinte in alto con manubri da seduto") it.rest = "2 min";
+    const fi = d1.items.findIndex((it) => exKey(it.name) === "french press con manubri su panca piana");
+    if (fi >= 0) d1.items[fi] = { id: uid(), name: NEWT, sets: 3, reps: "12-15", rest: "90 sec", note: "", group: "", kg: 5 };
+    const d4 = p4.days[3];
+    const byKey = (k) => d4.items.find((it) => exKey(it.name) === k);
+    const lc = d4.items.findIndex((it) => exKey(it.name) === "leg curl in piedi");
+    if (lc >= 0) d4.items[lc] = { id: uid(), name: "RDL con bilanciere", sets: 3, reps: "8-12", rest: "2 min", note: "", group: "", kg: 60 };
+    const ia = d4.items.findIndex((it) => exKey(it.name) === "affondi con bilanciere");
+    const ip = d4.items.findIndex((it) => exKey(it.name) === "panca piana con bilanciere");
+    if (ia >= 0 && ip >= 0 && ia < ip) [d4.items[ia], d4.items[ip]] = [d4.items[ip], d4.items[ia]];
+  }
+  // Il 2/11 la french press risulta registrata con i valori della volta prima: in realtà era la tirata singola 5 kg x 15.
+  const s = state.sessions.find((x) => x.id === "mvz9bnwguqyith");
+  const e = s?.exercises.find((x) => x.key === "french press con manubri su panca piana");
+  if (e) { e.key = exKey(NEWT); e.name = NEWT; e.sets = [{ kg: 5, reps: 15 }, { kg: 5, reps: 15 }, { kg: 5, reps: 15 }]; }
+  state.seedV = 11;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");

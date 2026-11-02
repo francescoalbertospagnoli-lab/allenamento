@@ -1,6 +1,7 @@
 // Immagini esercizi: Free Exercise DB (github.com/yuhonas/free-exercise-db), pubblico dominio (Unlicense).
 // Nome esercizio -> id immagine (img/ex/<id>-0.webp e -1.webp). Alcune sono la variante più simile disponibile.
 export const EX_IMAGES = {
+ "Tirata singola al cavo per tricipiti": "Cable_One_Arm_Tricep_Extension",
  "Addominali su panca inclinata": "Decline_Crunch",
  "Affondi con bilanciere": "Barbell_Lunge",
  "Affondi in camminata": "Barbell_Walking_Lunge",
