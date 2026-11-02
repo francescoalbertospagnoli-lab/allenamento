@@ -58,7 +58,7 @@ export const DEFAULT_PROGRAMS = [
           E("Panca piana con bilanciere", 4, "5 (vedi note)", "3 min", "Parti da un 4x5 con un carico circa buffer 2, poi la settimana seguente fai un 4x3 sempre buffer 2, cerca di aumentare le reps a parità di carico fintanto che non chiudi nuovamente un 5x5, dopo di che ripeti lo schema aggiornando il carico."),
           E("Affondi con bilanciere", 3, "8-12", "2 min", "", "", 20),
           E("Military press con bilanciere", 3, "6-8", "2 min", "Da seduto."),
-          E("Rematore con manubrio su panca", 3, "8-12", "2 min"),
+          E("Low row alla macchina", 3, "8-12", "2 min", "Petto appoggiato; tira verso l'anca, gomiti stretti, allungamento completo in avanti."),
           E("Curl alternato con manubri", 3, "8-12", "2 min"),
           E("Tricipiti alla corda (Vulken)", 3, "8-12", "90 sec"),
           E("Alzate laterali con manubri", 3, "12-15", "90 sec", "Eccentrica controllata."),

@@ -219,6 +219,16 @@ if (!(state.seedV >= 15)) {
   state.seedV = 15;
 }
 
+// Migrazione 16: G4 rematore con manubrio -> low row alla macchina.
+if (!(state.seedV >= 16)) {
+  const d4 = state.programs.find((p) => p.id === "p4")?.days[3];
+  const NOTE = "Petto appoggiato; tira verso l'anca, gomiti stretti, allungamento completo in avanti.";
+  if (d4) for (const it of d4.items) if (exKey(it.name) === "rematore con manubrio su panca") { it.name = "Low row alla macchina"; it.note = NOTE; delete it.kg; }
+  if (state.active?.programId === "p4" && state.active.dayIndex === 3)
+    for (const e of state.active.exercises) if (e.key === "rematore con manubrio su panca" && !e.sets?.some?.((x) => x.done)) { e.name = "Low row alla macchina"; e.key = exKey(e.name); }
+  state.seedV = 16;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
