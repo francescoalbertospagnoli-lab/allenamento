@@ -206,6 +206,8 @@ if (!(state.seedV >= 15)) {
     if (i1 >= 0) d1.items[i1] = mk("Katana extension", 3, "10-12", "90 sec", "Estensione sopra la testa al cavo: lavora il capo lungo in allungamento.");
     for (const it of d3.items) if (exKey(it.name) === "spinte su panca inclinata con manubri") it.sets = 3;
     if (!d3.items.some((it) => exKey(it.name) === "alzate laterali al cavo")) d3.items.push(mk("Alzate laterali al cavo", 3, "12-15", "90 sec"));
+    const done4 = d4.items.some((it) => ["rematore con manubrio su panca", "low row alla macchina"].includes(exKey(it.name)));
+    if (!done4) {
     const keep = d4.items.filter((it) => !["pressa per polpacci", "addominali su panca inclinata", "curl alternato con manubri", "tricipiti alla corda vulken"].includes(exKey(it.name)));
     const old = (k) => d4.items.find((it) => exKey(it.name) === k);
     d4.items = [
@@ -215,6 +217,7 @@ if (!(state.seedV >= 15)) {
       old("tricipiti alla corda vulken") || mk("Tricipiti alla corda (Vulken)", 3, "8-12", "90 sec"),
       mk("Alzate laterali con manubri", 3, "12-15", "90 sec", "Eccentrica controllata."),
     ];
+    }
   }
   state.seedV = 15;
 }

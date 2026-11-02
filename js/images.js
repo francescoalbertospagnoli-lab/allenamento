@@ -81,6 +81,7 @@ export const EX_IMAGES = {
  "Squat bulgaro con manubri": "Split_Squat_with_Dumbbells",
  "Plank": "Plank",
  "Rematore con manubrio su panca": "One-Arm_Dumbbell_Row",
+ "Low row alla macchina": "Leverage_Iso_Row",
  "Pull Down singolo al macchinario": "One_Arm_Lat_Pulldown",
  "Aperture posteriori con manubri prono su panca": "Reverse_Flyes",
  "Hip thrust machine": "Barbell_Hip_Thrust",
