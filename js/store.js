@@ -243,6 +243,25 @@ if (!(state.seedV >= 17)) {
   state.seedV = 17;
 }
 
+// Migrazione 18: revisione recuperi.
+if (!(state.seedV >= 18)) {
+  const R = [
+    [0, "chest press", "2 min"],
+    [1, "pendulum squat", "3 min"],
+    [3, "rdl con bilanciere", "150 sec"],
+    [3, "affondi con bilanciere", "150 sec"],
+    [3, "military press con bilanciere", "150 sec"],
+    [3, "curl alternato con manubri", "90 sec"],
+  ];
+  const p4 = state.programs.find((p) => p.id === "p4");
+  for (const [di, k, rest] of R) {
+    for (const it of p4?.days[di]?.items || []) if (exKey(it.name) === k) it.rest = rest;
+    if (state.active?.programId === "p4" && state.active.dayIndex === di)
+      for (const e of state.active.exercises) if (e.key === k) e.target.rest = rest;
+  }
+  state.seedV = 18;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");

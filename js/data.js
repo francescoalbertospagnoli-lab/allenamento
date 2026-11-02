@@ -18,7 +18,7 @@ export const DEFAULT_PROGRAMS = [
           E("Panca 30° al multipower", 4, "6-10", "150 sec", "30° — lieve fermo al petto."),
           E("Alzate laterali con manubri", 3, "10-12", "2 min", "Eccentrica controllata."),
           E("Spinte in alto con manubri da seduto", 3, "8-10", "2 min"),
-          E("Chest press", 3, "8-12", "90 sec"),
+          E("Chest press", 3, "8-12", "2 min"),
           E("Pectoral fly", 3, "10-15", "90 sec", "", "", 20),
           E("Reverse fly alla macchina (pec deck)", 3, "8-12", "90 sec", "Stessa macchina del pectoral fly, seduto al contrario.", "", 12.5),
           E("Tirata singola al cavo per tricipiti", 3, "12-15", "90 sec", "", "", 5),
@@ -28,7 +28,7 @@ export const DEFAULT_PROGRAMS = [
       {
         title: "Lower Quad + Richiamo glutei",
         items: [
-          E("Pendulum squat", 3, "6-10", "2 min"),
+          E("Pendulum squat", 3, "6-10", "3 min"),
           E("Hyperextension", 3, "8-12", "2 min"),
           E("Leg Press a 45°", 3, "8-10", "3 min"),
           E("Leg Curl seduto", 3, "8-12", "90 sec", "Busto leggermente in avanti per allungare di più i femorali."),
@@ -54,12 +54,12 @@ export const DEFAULT_PROGRAMS = [
       {
         title: "Full Body",
         items: [
-          E("RDL con bilanciere", 3, "8-12", "2 min", "", "", 60),
+          E("RDL con bilanciere", 3, "8-12", "150 sec", "", "", 60),
           E("Panca piana con bilanciere", 4, "5 (vedi note)", "3 min", "Parti da un 4x5 con un carico circa buffer 2, poi la settimana seguente fai un 4x3 sempre buffer 2, cerca di aumentare le reps a parità di carico fintanto che non chiudi nuovamente un 5x5, dopo di che ripeti lo schema aggiornando il carico."),
-          E("Affondi con bilanciere", 3, "8-12", "2 min", "", "", 20),
-          E("Military press con bilanciere", 3, "6-8", "2 min", "Da seduto."),
+          E("Affondi con bilanciere", 3, "8-12", "150 sec", "", "", 20),
+          E("Military press con bilanciere", 3, "6-8", "150 sec", "Da seduto."),
           E("Low row alla macchina", 3, "8-12", "2 min", "Petto appoggiato; tira verso l'anca, gomiti stretti, allungamento completo in avanti."),
-          E("Curl alternato con manubri", 3, "8-12", "2 min"),
+          E("Curl alternato con manubri", 3, "8-12", "90 sec"),
           E("Tricipiti alla corda (Vulken)", 3, "8-12", "90 sec"),
           E("Alzate laterali con manubri", 3, "12-15", "90 sec", "Eccentrica controllata."),
           E("Leg Curl seduto", 3, "10-12", "90 sec", "Busto leggermente in avanti per allungare di più i femorali."),
