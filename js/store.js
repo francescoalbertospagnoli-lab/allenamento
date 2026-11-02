@@ -194,6 +194,31 @@ if (!(state.seedV >= 14)) {
   state.seedV = 14;
 }
 
+// Migrazione 15 (02/11/2026): più deltoidi laterali e dorso 2 volte a settimana.
+// G1 H corda -> Katana; G3 B 3 serie + H alzate laterali al cavo; G4 rematore, alzate laterali (via polpacci e addominali).
+if (!(state.seedV >= 15)) {
+  try { localStorage.setItem("gymlog.pre-v15", JSON.stringify(state)); } catch {}
+  const p4 = state.programs.find((p) => p.id === "p4");
+  const mk = (name, sets, reps, rest, note = "") => ({ id: uid(), name, sets, reps, rest, note, group: "" });
+  if (p4) {
+    const [d1, , d3, d4] = p4.days;
+    const i1 = d1.items.findIndex((it) => exKey(it.name) === "tricipiti alla corda vulken");
+    if (i1 >= 0) d1.items[i1] = mk("Katana extension", 3, "10-12", "90 sec", "Estensione sopra la testa al cavo: lavora il capo lungo in allungamento.");
+    for (const it of d3.items) if (exKey(it.name) === "spinte su panca inclinata con manubri") it.sets = 3;
+    if (!d3.items.some((it) => exKey(it.name) === "alzate laterali al cavo")) d3.items.push(mk("Alzate laterali al cavo", 3, "12-15", "90 sec"));
+    const keep = d4.items.filter((it) => !["pressa per polpacci", "addominali su panca inclinata", "curl alternato con manubri", "tricipiti alla corda vulken"].includes(exKey(it.name)));
+    const old = (k) => d4.items.find((it) => exKey(it.name) === k);
+    d4.items = [
+      ...keep,
+      mk("Rematore con manubrio su panca", 3, "8-12", "2 min"),
+      old("curl alternato con manubri") || mk("Curl alternato con manubri", 3, "8-12", "2 min"),
+      old("tricipiti alla corda vulken") || mk("Tricipiti alla corda (Vulken)", 3, "8-12", "90 sec"),
+      mk("Alzate laterali con manubri", 3, "12-15", "90 sec", "Eccentrica controllata."),
+    ];
+  }
+  state.seedV = 15;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
