@@ -62,6 +62,8 @@ export const DEFAULT_PROGRAMS = [
           E("Curl alternato con manubri", 3, "8-12", "2 min"),
           E("Tricipiti alla corda (Vulken)", 3, "8-12", "90 sec"),
           E("Alzate laterali con manubri", 3, "12-15", "90 sec", "Eccentrica controllata."),
+          E("Leg Curl seduto", 3, "10-12", "90 sec", "Busto leggermente in avanti per allungare di più i femorali."),
+          E("Pressa per polpacci", 3, "8-12", "90 sec", "In piedi alla hack squat machine.", "", 100),
         ],
       },
     ],

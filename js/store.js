@@ -232,6 +232,17 @@ if (!(state.seedV >= 16)) {
   state.seedV = 16;
 }
 
+// Migrazione 17: G4 + leg curl seduto e pressa polpacci in fondo.
+if (!(state.seedV >= 17)) {
+  const d4 = state.programs.find((p) => p.id === "p4")?.days[3];
+  if (d4) {
+    const has = (k) => d4.items.some((it) => exKey(it.name) === k);
+    if (!has("leg curl seduto")) d4.items.push({ id: uid(), name: "Leg Curl seduto", sets: 3, reps: "10-12", rest: "90 sec", note: "Busto leggermente in avanti per allungare di più i femorali.", group: "" });
+    if (!has("pressa per polpacci")) d4.items.push({ id: uid(), name: "Pressa per polpacci", sets: 3, reps: "8-12", rest: "90 sec", note: "In piedi alla hack squat machine.", group: "", kg: 100 });
+  }
+  state.seedV = 17;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
