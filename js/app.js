@@ -745,7 +745,7 @@ function vSettings() {
       <button class="btn primary" data-action="export">Esporta backup</button>
       <label class="btn">Importa backup<input type="file" accept=".json,application/json" data-action="import" hidden></label>
     </div>
-    <p class="muted small">Versione app 19 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
+    <p class="muted small">Versione app 20 · ${st.sessions.length} sedute · ${st.bodyweight.length} pesate · ${(size / 1024).toFixed(1)} KB</p>
   </div>
   <h5 class="month">Installa sul telefono</h5>
   <div class="card small">

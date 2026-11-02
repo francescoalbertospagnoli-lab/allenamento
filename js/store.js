@@ -185,6 +185,15 @@ if (!(state.seedV >= 13)) {
   state.seedV = 13;
 }
 
+// Migrazione 14: leg curl seduto 3x8-12.
+if (!(state.seedV >= 14)) {
+  const d2 = state.programs.find((p) => p.id === "p4")?.days[1];
+  if (d2) for (const it of d2.items) if (exKey(it.name) === "leg curl seduto") it.reps = "8-12";
+  if (state.active?.programId === "p4" && state.active.dayIndex === 1)
+    for (const e of state.active.exercises) if (e.key === "leg curl seduto") e.target.reps = "8-12";
+  state.seedV = 14;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
