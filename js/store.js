@@ -169,6 +169,14 @@ if (!(state.seedV >= 11)) {
   state.seedV = 11;
 }
 
+// Migrazione 12 (02/11/2026): G2 esercizio D leg curl in piedi al posto dell'RDL.
+if (!(state.seedV >= 12)) {
+  const d2 = state.programs.find((p) => p.id === "p4")?.days[1];
+  const i = d2 ? d2.items.findIndex((it) => exKey(it.name) === "rdl con bilanciere") : -1;
+  if (i >= 0) d2.items[i] = { id: uid(), name: "Leg Curl in piedi", sets: 3, reps: "10-15", rest: "90 sec", note: "", group: "" };
+  state.seedV = 12;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
