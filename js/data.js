@@ -31,7 +31,7 @@ export const DEFAULT_PROGRAMS = [
           E("Pendulum squat", 3, "6-10", "2 min"),
           E("Hyperextension", 3, "8-12", "2 min"),
           E("Leg Press a 45°", 3, "8-10", "3 min"),
-          E("Leg Curl in piedi", 3, "10-15", "90 sec"),
+          E("Leg Curl seduto", 3, "10-15", "90 sec", "Busto leggermente in avanti per allungare di più i femorali."),
           E("Leg Extension", 3, "8", "3 min", "Superserie: 3×8 a due gambe, poi subito gamba singola al massimo. Recupero dopo la gamba singola.", "E"),
           E("Leg Extension gamba singola", 3, "max (per gamba)", "0", "In superserie con la Leg Extension: ripetizioni al massimo, prima una gamba poi l'altra.", "E"),
           E("Pressa per polpacci", 3, "8-12", "90 sec", "In piedi alla hack squat machine.", "", 100),

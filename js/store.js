@@ -177,6 +177,14 @@ if (!(state.seedV >= 12)) {
   state.seedV = 12;
 }
 
+// Migrazione 13 (02/11/2026): G2 leg curl seduto al posto di quello in piedi.
+if (!(state.seedV >= 13)) {
+  const d2 = state.programs.find((p) => p.id === "p4")?.days[1];
+  const i = d2 ? d2.items.findIndex((it) => exKey(it.name) === "leg curl in piedi") : -1;
+  if (i >= 0) d2.items[i] = { id: uid(), name: "Leg Curl seduto", sets: 3, reps: "10-15", rest: "90 sec", note: "Busto leggermente in avanti per allungare di più i femorali.", group: "" };
+  state.seedV = 13;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
