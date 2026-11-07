@@ -311,6 +311,26 @@ if (!(state.seedV >= 22)) {
   state.seedV = 22;
 }
 
+// Migrazione 23: G4 del 07/11/2026 registrato a posteriori con gli stessi pesi dell'ultima volta (scheda G4 di quella mattina).
+if (!(state.seedV >= 23)) {
+  const day = "2026-11-07";
+  const already = state.sessions.some((x) => x.programId === "p4" && x.dayIndex === 3 && String(x.startedAt).startsWith(day));
+  if (!already) {
+    const names = ["RDL con bilanciere", "Panca piana con bilanciere", "Affondi con bilanciere", "Military press con bilanciere", "Low row alla macchina", "Curl alternato con manubri", "Tricipiti alla corda (Vulken)", "Alzate laterali con manubri", "Leg Curl seduto", "Pressa per polpacci"];
+    const sorted = [...state.sessions].sort((a, b) => String(b.startedAt).localeCompare(String(a.startedAt)));
+    const exercises = [];
+    for (const name of names) {
+      const k = exKey(name);
+      let sets = null;
+      for (const se of sorted) { const e = se.exercises.find((x) => (x.key || exKey(x.name)) === k && x.sets?.length); if (e) { sets = e.sets.map((x) => ({ kg: x.kg, reps: x.reps })); break; } }
+      if (sets) exercises.push({ key: k, name, sets });
+    }
+    if (exercises.length)
+      state.sessions.push({ id: "post-" + day + "-g4", programId: "p4", programName: "4 giorni", dayIndex: 3, dayTitle: "Full Body", startedAt: day + "T11:00:00.000Z", endedAt: day + "T12:30:00.000Z", note: "Registrato a posteriori: pesi e ripetizioni uguali all'ultima volta.", exercises });
+  }
+  state.seedV = 23;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
