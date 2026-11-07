@@ -53,7 +53,7 @@ export const DEFAULT_PROGRAMS = [
         title: "Full Body",
         items: [
           E("RDL con bilanciere", 3, "8-12", "150 sec", "", "", 60),
-          E("Leg Press a 45°", 3, "8-10", "3 min"),
+          E("Leg Extension", 3, "10-12", "90 sec"),
           E("Spinte su panca inclinata con manubri", 3, "8-12", "2 min", "Inclinata 30°."),
           E("Low row alla macchina", 3, "8-12", "2 min", "Petto appoggiato; tira verso l'anca, gomiti stretti, allungamento completo in avanti."),
           E("Wide raise crucifix su panca", 4, "10-12", "90 sec", "Prono su panca inclinata, braccia larghe: deltoide laterale. Prime 2 serie: fermo di 2 secondi in tensione."),

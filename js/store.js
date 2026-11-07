@@ -304,6 +304,13 @@ if (!(state.seedV >= 21)) {
   state.seedV = 21;
 }
 
+// Migrazione 22: G4 B leg press -> leg extension 3x10-12.
+if (!(state.seedV >= 22)) {
+  const d4 = state.programs.find((p) => p.id === "p4")?.days[3];
+  if (d4) for (const it of d4.items) if (exKey(it.name) === "leg press a 45°") { it.name = "Leg Extension"; it.reps = "10-12"; it.rest = "90 sec"; it.note = ""; }
+  state.seedV = 22;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
