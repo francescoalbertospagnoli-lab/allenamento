@@ -88,5 +88,15 @@ export const EX_IMAGES = {
  "Curl bicipiti al cavo basso con asta dritta": "Standing_Biceps_Cable_Curl",
  "Alzate laterali singole al cavo da dietro": "Cable_Seated_Lateral_Raise",
  "Leg raises sui gomiti alle parallele": "Knee_Hip_Raise_On_Parallel_Bars",
- "Reverse fly alla macchina (pec deck)": "Reverse_Machine_Flyes"
+ "Reverse fly alla macchina (pec deck)": "Reverse_Machine_Flyes",
+ "Wide raise crucifix su panca": "Dumbbell_Lying_Rear_Lateral_Raise",
+ "Military press al multipower": "Smith_Machine_Overhead_Shoulder_Press",
+ "Curl su panca inclinata": "Incline_Dumbbell_Curl",
+ "Curl con manubri (drop set)": "Dumbbell_Bicep_Curl",
+ "Addominali alla macchina": "Ab_Crunch_Machine",
+ "Hip thrust": "Barbell_Hip_Thrust",
+ "Lat Machine presa larga": "Wide-Grip_Lat_Pulldown",
+ "Pulley presa larga al petto alto": "Seated_Cable_Rows",
+ "Dip": "Dips_-_Triceps_Version",
+ "Estensioni tricipiti sopra la testa (Vulken)": "Cable_Rope_Overhead_Triceps_Extension"
 };

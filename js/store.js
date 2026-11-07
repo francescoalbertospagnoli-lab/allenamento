@@ -290,6 +290,20 @@ if (!(state.seedV >= 20)) {
   state.seedV = 20;
 }
 
+// Migrazione 21 (07/11/2026): nuova scheda 4 giorni. Copia della vecchia in gymlog.pre-v21.
+if (!(state.seedV >= 21)) {
+  try { localStorage.setItem("gymlog.pre-v21", JSON.stringify(state)); } catch {}
+  const p4 = state.programs.find((p) => p.id === "p4");
+  const def = DEFAULT_PROGRAMS.find((p) => p.id === "p4");
+  if (p4 && def) {
+    const fresh4 = withIds([structuredClone(def)])[0];
+    p4.days = p4.days.length === 4
+      ? fresh4.days.map((d, i) => ({ ...d, id: p4.days[i].id || d.id }))
+      : fresh4.days;
+  }
+  state.seedV = 21;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
