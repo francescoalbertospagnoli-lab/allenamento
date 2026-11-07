@@ -13,7 +13,7 @@ export const DEFAULT_PROGRAMS = [
     version: 2,
     days: [
       {
-        title: "Petto + Spalle + Tricipiti",
+        title: "Petto + Spalle + Bicipiti",
         items: [
           E("Panca 30° al multipower", 4, "6-10", "150 sec", "30° — lieve fermo al petto."),
           E("Alzate laterali con manubri", 3, "10-12", "2 min", "Eccentrica controllata."),
@@ -21,8 +21,8 @@ export const DEFAULT_PROGRAMS = [
           E("Chest press", 3, "8-12", "2 min"),
           E("Pectoral fly", 3, "10-15", "90 sec", "", "", 20),
           E("Reverse fly alla macchina (pec deck)", 3, "8-12", "90 sec", "Stessa macchina del pectoral fly, seduto al contrario.", "", 12.5),
-          E("Tirata singola al cavo per tricipiti", 3, "12-15", "90 sec", "", "", 5),
-          E("Katana extension", 3, "10-12", "90 sec", "Estensione sopra la testa al cavo: lavora il capo lungo in allungamento."),
+          E("Hammer curl su panca inclinata", 3, "8-12", "90 sec", "", "", 10),
+          E("Curl su panca Scott con bilanciere EZ", 3, "8-12", "90 sec"),
         ],
       },
       {
@@ -39,15 +39,15 @@ export const DEFAULT_PROGRAMS = [
         ],
       },
       {
-        title: "Upper Pull + Richiamo push",
+        title: "Upper Pull + Tricipiti + Richiamo push",
         items: [
           E("Lat Machine con trazy bar", 3, "8-12", "2 min"),
           E("Spinte su panca inclinata con manubri", 3, "8-12", "2 min", "Inclinata 30°. Va bene anche Chest press incline 30° se lo preferisci."),
           E("Pulley", 4, "8-10", "2 min", "", "", 60),
           E("Pulldown presa singola al macchinario (gran dorsale)", 3, "10-12", "2 min", "", "", 30),
           E("Reverse fly alla macchina (pec deck)", 3, "10-15", "90 sec", "Stessa macchina del pectoral fly, seduto al contrario.", "", 12.5),
-          E("Hammer curl su panca inclinata", 3, "8-12", "90 sec", "", "", 10),
-          E("Curl su panca Scott con bilanciere EZ", 3, "8-12", "90 sec"),
+          E("Tirata singola al cavo per tricipiti", 3, "12-15", "90 sec", "", "", 5),
+          E("Katana extension", 3, "10-12", "90 sec", "Estensione sopra la testa al cavo: lavora il capo lungo in allungamento."),
           E("Alzate laterali al cavo", 3, "12-15", "90 sec"),
         ],
       },

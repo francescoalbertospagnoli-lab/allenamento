@@ -262,6 +262,27 @@ if (!(state.seedV >= 18)) {
   state.seedV = 18;
 }
 
+// Migrazione 19 (07/11/2026): braccia scambiate. G1 petto/spalle + bicipiti, G3 dorso + tricipiti.
+if (!(state.seedV >= 19)) {
+  try { localStorage.setItem("gymlog.pre-v19", JSON.stringify(state)); } catch {}
+  const p4 = state.programs.find((p) => p.id === "p4");
+  if (p4) {
+    const [d1, , d3] = p4.days;
+    const TRI = ["tirata singola al cavo per tricipiti", "katana extension"];
+    const BI = ["hammer curl su panca inclinata", "curl su panca scott con bilanciere ez"];
+    const tri = d1.items.filter((it) => TRI.includes(exKey(it.name)));
+    const bi = d3.items.filter((it) => BI.includes(exKey(it.name)));
+    d1.items = d1.items.filter((it) => !TRI.includes(exKey(it.name))).concat(bi);
+    const rest3 = d3.items.filter((it) => !BI.includes(exKey(it.name)));
+    const j = rest3.findIndex((it) => exKey(it.name) === "alzate laterali al cavo");
+    if (j >= 0) rest3.splice(j, 0, ...tri); else rest3.push(...tri);
+    d3.items = rest3;
+    if (d1.title === "Petto + Spalle + Tricipiti") d1.title = "Petto + Spalle + Bicipiti";
+    if (d3.title === "Upper Pull + Richiamo push") d3.title = "Upper Pull + Tricipiti + Richiamo push";
+  }
+  state.seedV = 19;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
