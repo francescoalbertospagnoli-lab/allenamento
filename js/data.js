@@ -26,7 +26,7 @@ export const DEFAULT_PROGRAMS = [
         ],
       },
       {
-        title: "Lower Quad + Richiamo glutei",
+        title: "Gambe",
         items: [
           E("Pendulum squat", 3, "6-10", "3 min"),
           E("Hyperextension", 3, "8-12", "2 min"),
@@ -39,7 +39,7 @@ export const DEFAULT_PROGRAMS = [
         ],
       },
       {
-        title: "Upper Pull + Tricipiti + Richiamo push",
+        title: "Dorso + Tricipiti",
         items: [
           E("Lat Machine con trazy bar", 3, "8-12", "2 min"),
           E("Spinte su panca inclinata con manubri", 3, "8-12", "2 min", "Inclinata 30°. Va bene anche Chest press incline 30° se lo preferisci."),

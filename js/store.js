@@ -283,6 +283,13 @@ if (!(state.seedV >= 19)) {
   state.seedV = 19;
 }
 
+// Migrazione 20: titoli G2 "Gambe", G3 "Dorso + Tricipiti".
+if (!(state.seedV >= 20)) {
+  const p4 = state.programs.find((p) => p.id === "p4");
+  if (p4) { p4.days[1].title = "Gambe"; p4.days[2].title = "Dorso + Tricipiti"; }
+  state.seedV = 20;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
