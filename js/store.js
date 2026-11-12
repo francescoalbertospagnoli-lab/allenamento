@@ -331,6 +331,19 @@ if (!(state.seedV >= 23)) {
   state.seedV = 23;
 }
 
+// Migrazione 24 (12/11/2026): G3 + tirate singole dall'alto al cavo per tricipiti dopo l'esercizio F.
+if (!(state.seedV >= 24)) {
+  const d3 = state.programs.find((p) => p.id === "p4")?.days[2];
+  const NAME = "Tirate singole dall'alto al cavo per tricipiti";
+  if (d3 && !d3.items.some((it) => exKey(it.name) === exKey(NAME))) {
+    const item = { id: uid(), name: NAME, sets: 3, reps: "8-10", rest: "90 sec", note: "", group: "", kg: 7.5 };
+    let j = d3.items.findIndex((it) => exKey(it.name) === exKey("Estensioni tricipiti sopra la testa (Vulken)"));
+    if (j < 0) j = 5;
+    d3.items.splice(Math.min(j + 1, d3.items.length), 0, item);
+  }
+  state.seedV = 24;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");

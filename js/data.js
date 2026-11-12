@@ -46,6 +46,7 @@ export const DEFAULT_PROGRAMS = [
           E("Reverse fly alla macchina (pec deck)", 3, "10-15", "90 sec", "Stessa macchina del pectoral fly, seduto al contrario.", "", 12.5),
           E("Dip", 3, "max", "2 min", "Se senti fastidio alla spalla, sostituisci con estensioni tricipiti alla macchina."),
           E("Estensioni tricipiti sopra la testa (Vulken)", 3, "8-10", "90 sec"),
+          E("Tirate singole dall'alto al cavo per tricipiti", 3, "8-10", "90 sec", "", "", 7.5),
           E("Addominali alla macchina", 3, "8-10", "1 min"),
         ],
       },

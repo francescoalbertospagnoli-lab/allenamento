@@ -98,5 +98,6 @@ export const EX_IMAGES = {
  "Lat Machine presa larga": "Wide-Grip_Lat_Pulldown",
  "Pulley presa larga al petto alto": "Seated_Cable_Rows",
  "Dip": "Dips_-_Triceps_Version",
+ "Tirate singole dall'alto al cavo per tricipiti": "Cable_One_Arm_Tricep_Extension",
  "Estensioni tricipiti sopra la testa (Vulken)": "Cable_Rope_Overhead_Triceps_Extension"
 };
