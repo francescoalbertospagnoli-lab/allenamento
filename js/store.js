@@ -344,6 +344,26 @@ if (!(state.seedV >= 24)) {
   state.seedV = 24;
 }
 
+// Migrazione 25 (15/11/2026): G4 low row 90 sec, wide raise dopo la tirata singola; G3 B pulley presa larga -> low row.
+if (!(state.seedV >= 25)) {
+  const p4 = state.programs.find((p) => p.id === "p4");
+  if (p4) {
+    const d3 = p4.days[2], d4 = p4.days[3];
+    const lr = d4.items.find((it) => exKey(it.name) === "low row alla macchina");
+    if (lr) lr.rest = "90 sec";
+    const iw = d4.items.findIndex((it) => exKey(it.name) === "wide raise crucifix su panca");
+    if (iw >= 0) {
+      const [w] = d4.items.splice(iw, 1);
+      const it = d4.items.findIndex((x) => exKey(x.name) === "tirata singola al cavo per tricipiti");
+      d4.items.splice(it >= 0 ? it + 1 : d4.items.length, 0, w);
+    }
+    const ib = d3.items.findIndex((it) => exKey(it.name) === "pulley presa larga al petto alto");
+    if (ib >= 0 && !d3.items.some((it) => exKey(it.name) === "low row alla macchina"))
+      d3.items[ib] = { id: uid(), name: "Low row alla macchina", sets: 3, reps: "8-12", rest: "2 min", note: "Petto appoggiato; tira verso l'anca, gomiti stretti, allungamento completo in avanti.", group: "" };
+  }
+  state.seedV = 25;
+}
+
 // Copia di sicurezza locale una volta al giorno (protegge da errori, non dalla cancellazione dei dati del browser).
 try {
   const snapAt = localStorage.getItem("gymlog.snap.at");
